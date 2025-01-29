@@ -1,9 +1,18 @@
-some
-if a > b
+class program
 {
-   return 123
-}
-else
-{
-    return 234
+	public main(): int
+	{
+		int a = 2;
+
+		if (a != 2)
+		{
+			return 10
+		}
+		else
+		{
+			return 9
+		}
+
+		return 1
+	}
 }

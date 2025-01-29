@@ -10,8 +10,6 @@ public class Lexer
     public int markedPos;
     public int lexicalState;
 
-    private string word;
-
     private static Dictionary<string, Type> tokenTypeBySingleWord = new Dictionary<string, Type>()
     {
         { "if", typeof(Token_If) },
@@ -51,7 +49,6 @@ public class Lexer
 
     public Token Advance()
     {
-
         if (currentPos >= endRead)
         {
             return new Token_EOF();
@@ -60,26 +57,101 @@ public class Lexer
         // Save word start pos
         startRead = currentPos;
 
+        
+        Token token = AdvanceInternal();
+        markedPos = currentPos; // Save word end pos
 
-        char currentChar = chars[currentPos];
+        if (token == null)
+        {
+            return new Token_Bad();
+        }
+        else
+        {
+            return token;
+        }
+    }
+
+    private Token AdvanceInternal()
+    {
+        char startChar = chars[currentPos];
         currentPos++;
 
-        if (currentChar == ' ')
+        if (startChar == ' ' || startChar == '\t')
         {
-            markedPos = currentPos;
             return new Token_Space();
         }
-        else if (char.IsLetter(currentChar))
+
+        if (tokenTypeBySingleChar.TryGetValue(startChar.ToString(), out Type singleCharTokenType))
         {
+            return (Token)Activator.CreateInstance(singleCharTokenType);
+        }
+        
+
+        if (char.IsDigit(startChar))
+        {
+            //
+            // Iterate digits for numbers
+            //
             while (currentPos < endRead)
             {
-                string word = string.Concat(chars[startRead..currentPos]);
+                if (char.IsDigit(chars[currentPos]) == false)
+                {
+                    string word = string.Concat(chars[startRead..currentPos]);
+
+                    if (int.TryParse(word, out int value))
+                    {
+                        return new Token_Constant();
+                    }
+
+                    break;
+                }
+
+                currentPos++;
+            }
+        }
+        else
+        {
+            //
+            // Iterate chars for tokens
+            //
+            string word = "";
+
+            while (currentPos < endRead)
+            {
+                word = string.Concat(chars[startRead..currentPos]);
+
+
+
+                // Do before tokenTypeBySingleWord due to it has '=' too
+                if (startChar == '=' || startChar == '!')
+                {
+                    if (currentPos + 1 < endRead)
+                    {
+                        char secondChar = chars[currentPos];
+                        if (secondChar == '=' && Token_Equality.TryMatch(word + secondChar, out var seq))
+                        {
+                            currentPos++;
+                            return seq;
+                        }
+                    }
+                }
+
+
 
                 if (tokenTypeBySingleWord.TryGetValue(word, out Type tokenType))
                 {
-                    markedPos = currentPos;
                     return (Token)Activator.CreateInstance(tokenType);
                 }
+
+                if (Token_Equality.TryMatch(word, out var eq)) return eq;
+
+                if (Token_AddSub.TryMatch(word, out var term)) return term;
+                if (Token_Factor.TryMatch(word, out var fact)) return fact;
+                if (Token_Unary.TryMatch(word, out var un)) return un;
+
+                if (Token_Comprassion.TryMatch(word, out var cmp)) return cmp;
+
+
 
                 if (char.IsLetterOrDigit(chars[currentPos]) == false)
                 {
@@ -89,13 +161,10 @@ public class Lexer
                 currentPos++;
             }
 
-            markedPos = currentPos; // Save word end pos
+            if (Token_Visibility.TryMatch(word, out Token_Visibility tokenVisibility)) return tokenVisibility;
             return new Token_Identifier();
         }
-        else
-        {
-            markedPos = currentPos;
-            return new Token_Bad();
-        }
+
+        return null;
     }
 }
