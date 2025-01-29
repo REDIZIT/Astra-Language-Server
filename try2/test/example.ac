@@ -1,0 +1,13 @@
+some text
+# and comments
+print 123
+-- another comments 
+- single
+example
+
+if myVar > 0
+{
+    return 123
+}
+
+ret
