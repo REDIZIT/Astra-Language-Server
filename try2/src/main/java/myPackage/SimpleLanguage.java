@@ -92,8 +92,7 @@ public class SimpleLanguage extends Language {
         System.out.println("Closing language server connection...");
 
         if (writer != null) {
-            writer.write("EXIT\n");
-            writer.flush();
+            Send("CLOSE");
             writer.close();
         }
         if (reader != null) reader.close();

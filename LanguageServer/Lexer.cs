@@ -8,6 +8,7 @@ public class Lexer
     public int startRead;
     public int endRead;
     public int markedPos;
+    public int lexicalState;
 
     private string word;
 
@@ -37,24 +38,19 @@ public class Lexer
         { "]", typeof(Token_SquareBracketClose) },
     };
 
-    public void Reset(List<char> chars)
+    public void Reset(List<char> chars, int start, int end, int initialState)
     {
         this.chars = chars;
-        currentPos = 0;
-        startRead = 0;
-        markedPos = 0;
-        endRead = chars.Count;
+        currentPos = markedPos = startRead = start;
+        endRead = end;
 
-        Console.WriteLine("Lexer got " + chars.Count + " chars");
+        lexicalState = initialState;
+
+        Console.WriteLine($"Lexer got {chars.Count} chars, {start}:{end} with state {initialState}");
     }
 
     public Token Advance()
     {
-        // Skip spaces
-        while (currentPos < endRead && chars[currentPos] == ' ')
-        {
-            currentPos++;
-        }
 
         if (currentPos >= endRead)
         {
@@ -68,7 +64,12 @@ public class Lexer
         char currentChar = chars[currentPos];
         currentPos++;
 
-        if (char.IsLetter(currentChar))
+        if (currentChar == ' ')
+        {
+            markedPos = currentPos;
+            return new Token_Space();
+        }
+        else if (char.IsLetter(currentChar))
         {
             while (currentPos < endRead)
             {
@@ -96,24 +97,5 @@ public class Lexer
             markedPos = currentPos;
             return new Token_Bad();
         }
-
-        //String tokenName = SimpleLanguage.INSTANCE.SendAndWait("advance");
-        //return DynTypes.tokenByName.get(tokenName);
-
-
-        //if (word == "example")
-        //{
-        //    word = "";
-
-        //    return new Token_Comment();
-        //}
-        //else
-        //{
-        //    word = "";
-        //    return new Token_Identifier()
-        //    {
-        //        name = "aboba"
-        //    };
-        //}
     }
 }

@@ -1,13 +1,9 @@
-some text
-# and comments
-print 123
--- another comments 
-- single
-example
-
-if myVar > 0
+some
+if a > b
 {
-    return 123
+   return 123
 }
-
-ret
+else
+{
+    return 234
+}

@@ -32,7 +32,7 @@ public static class Program
                         while (true)
                         {
                             string input = ReadMessage();
-                            if (input == "EXIT") break;
+                            if (input == "CLOSE") break;
 
                             OnReceived(input);
                         }
@@ -52,8 +52,13 @@ public static class Program
 
         if (input == "reset")
         {
-            string arg = ReadMessage();
-            lexer.Reset(arg.ToList());
+            List<char> chars = ReadMessage().ToList();
+
+            int start = int.Parse(ReadMessage());
+            int end = int.Parse(ReadMessage());
+            int initialState = int.Parse(ReadMessage());
+
+            lexer.Reset(chars, start, end, initialState);
         }
         else if (input == "advance")
         {
@@ -79,7 +84,11 @@ public static class Program
             buffer.Add((char)reader.Read());
         }
 
-        return string.Concat(buffer);
+        string message = string.Concat(buffer);
+
+        //Console.WriteLine("> " + message);
+
+        return message;
     }
     private static void SendMessage(string message)
     {

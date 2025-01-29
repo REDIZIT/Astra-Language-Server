@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AstraNASM\AstraNASM.csproj" />
+    <ProjectReference Include="..\..\AstraNASM\AstraNASM\AstraNASM.csproj" />
   </ItemGroup>
 
 </Project>

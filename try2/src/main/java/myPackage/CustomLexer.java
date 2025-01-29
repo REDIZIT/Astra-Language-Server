@@ -53,13 +53,16 @@ public class CustomLexer implements FlexLexer {
         currentPos = Integer.parseInt(SimpleLanguage.INSTANCE.ReadMessage());
         markedPos = Integer.parseInt(SimpleLanguage.INSTANCE.ReadMessage());
 
-
         String tokenName = SimpleLanguage.INSTANCE.ReadMessage();
 
         if (tokenName.equals("Token_EOF"))
         {
             isAtEOF = true;
             return null;
+        }
+        else if (tokenName.equals("Token_Space"))
+        {
+            return TokenType.WHITE_SPACE;
         }
         else
         {
@@ -80,6 +83,9 @@ public class CustomLexer implements FlexLexer {
 
         SimpleLanguage.INSTANCE.Send("reset");
         SimpleLanguage.INSTANCE.Send(buf.toString());
+        SimpleLanguage.INSTANCE.Send(String.valueOf(start));
+        SimpleLanguage.INSTANCE.Send(String.valueOf(end));
+        SimpleLanguage.INSTANCE.Send(String.valueOf(initialState));
     }
 
     public final int length() {
