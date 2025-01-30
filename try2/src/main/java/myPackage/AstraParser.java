@@ -10,9 +10,6 @@ import myPackage.Packages.*;
 import myPackage.Packages.Package;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 
 public class AstraParser implements PsiParser, LightPsiParser {
 
@@ -33,14 +30,9 @@ public class AstraParser implements PsiParser, LightPsiParser {
 
         Package response = AstraLanguage.INSTANCE.bridge.SendAndRead(pack);
 
-//        LinkedHashMap<String, ArrayList<String>> map = (LinkedHashMap<String, ArrayList<String>>)response.data;
-//        ArrayList<String> entries = map.get("markers");
-
         ParserData data = AstraLanguage.INSTANCE.bridge.mapper.convertValue(response.data, new TypeReference<ParserData>() {});
 
         LogEntries entries = data.entries;
-
-        System.out.println(entries.markers.size());
 
         PsiBuilder.Marker marker = builder.mark();
 
@@ -65,33 +57,11 @@ public class AstraParser implements PsiParser, LightPsiParser {
                 }
             }
 
-//            PsiBuilder.Marker subMarker = builder.mark();
             builder.advanceLexer();
-//            subMarker.done(builder.getTokenType());
 
             currentTokenIndex++;
         }
 
-//        for (LogEntry entry : entries.markers)
-//        {
-//            if (builder.eof()) break;
-//
-//            if (currentIndex >= entry.tokenBeginIndex)
-//            {
-//                PsiBuilder.Marker subMarker = builder.mark();
-//                builder.advanceLexer();
-//                subMarker.error(entry.message);
-//            }
-//            else
-//            {
-//
-//            }
-//
-//            currentIndex++;
-//        }
-
         marker.done(root);
     }
-
-
 }

@@ -1,6 +1,7 @@
 package myPackage;
 
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
@@ -14,12 +15,13 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 
 public class AstraSyntaxHighlighter extends SyntaxHighlighterBase {
 
-    public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("IDENTIFIER");
-    public static final TextAttributesKey NUMBER = createTextAttributesKey("NUMBER");
-    public static final TextAttributesKey COMMENT = createTextAttributesKey("COMMENT");
-    public static final TextAttributesKey KEYWORD = createTextAttributesKey("KEYWORD");
-    public static final TextAttributesKey CONTROL_FLOW = createTextAttributesKey("CONTROL_FLOW");
-    public static final TextAttributesKey PUNCTUATION = createTextAttributesKey("PUNCTUATION");
+    public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER);
+    public static final TextAttributesKey TYPE_NAME = createTextAttributesKey("TYPE_NAME", DefaultLanguageHighlighterColors.CLASS_NAME);
+    public static final TextAttributesKey NUMBER = createTextAttributesKey("NUMBER", DefaultLanguageHighlighterColors.NUMBER);
+    public static final TextAttributesKey COMMENT = createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
+    public static final TextAttributesKey KEYWORD = createTextAttributesKey("KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey CONTROL_FLOW = createTextAttributesKey("CONTROL_FLOW", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey PUNCTUATION = createTextAttributesKey("PUNCTUATION", DefaultLanguageHighlighterColors.DOT);
     public static final TextAttributesKey BAD_CHARACTER = HighlighterColors.BAD_CHARACTER;
 
 
@@ -28,6 +30,7 @@ public class AstraSyntaxHighlighter extends SyntaxHighlighterBase {
     public static HashMap<String, TextAttributesKey> colorByTokenName = new HashMap<String, TextAttributesKey>()
     {{
         put("Token_Identifier", IDENTIFIER);
+        put("Token_TypeName", TYPE_NAME);
         put("Token_Bad", BAD_CHARACTER);
 
         put("Token_If", CONTROL_FLOW);
@@ -60,6 +63,8 @@ public class AstraSyntaxHighlighter extends SyntaxHighlighterBase {
         put("Token_Unary", PUNCTUATION);
 
         put("Token_Constant", NUMBER);
+
+        put("Token_Comment", COMMENT);
     }};
 
     @NotNull

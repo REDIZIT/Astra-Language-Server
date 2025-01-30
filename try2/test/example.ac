@@ -1,13 +1,7 @@
 class Program
-{
+
     public main(): int
-
-        return
-    }
-
-    public main2(): int
     {
-
+        return 12
     }
-    
 }

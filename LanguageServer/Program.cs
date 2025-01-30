@@ -183,9 +183,6 @@ public static class Program
     private static void WriteParse(string astraCode)
     {
         List<Token> tokens = lexer.Tokenize(astraCode, false);
-        List<Token> tokensWithSpaces = lexer.Tokenize(astraCode, true);
-
-        Console.WriteLine("Tokens with spaces: " + tokensWithSpaces.Count + ", without: " + tokens.Count);
 
         ErrorLogger logger = new();
 
