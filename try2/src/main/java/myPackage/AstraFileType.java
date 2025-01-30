@@ -5,35 +5,35 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public final class SimpleFileType extends LanguageFileType {
+public final class AstraFileType extends LanguageFileType {
 
-    public static final SimpleFileType INSTANCE = new SimpleFileType();
+    public static final AstraFileType INSTANCE = new AstraFileType();
 
-    private SimpleFileType() {
-        super(SimpleLanguage.INSTANCE);
+    private AstraFileType() {
+        super(AstraLanguage.INSTANCE);
     }
 
     @NotNull
     @Override
     public String getName() {
-        return "Simple File";
+        return "Astra File";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Simple language file";
+        return "Astra language file";
     }
 
     @NotNull
     @Override
     public String getDefaultExtension() {
-        return "simple";
+        return "ac";
     }
 
     @Override
     public Icon getIcon() {
-        return SimpleIcons.FILE;
+        return Icons.FILE;
     }
 
 }

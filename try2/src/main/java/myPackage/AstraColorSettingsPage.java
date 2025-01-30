@@ -9,21 +9,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-final class SimpleColorSettingsPage implements ColorSettingsPage {
+final class AstraColorSettingsPage implements ColorSettingsPage {
 
     @Override
     public Icon getIcon() {
-        return SimpleIcons.FILE;
+        return Icons.FILE;
     }
 
     @NotNull
     @Override
     public SyntaxHighlighter getHighlighter() {
-        return new SimpleSyntaxHighlighter();
+        return new AstraSyntaxHighlighter();
     }
 
     @NotNull
@@ -53,7 +52,7 @@ final class SimpleColorSettingsPage implements ColorSettingsPage {
     @Override
     public AttributesDescriptor @NotNull [] getAttributeDescriptors() {
 
-        var values = SimpleSyntaxHighlighter.colorByTokenName.values().toArray();
+        var values = AstraSyntaxHighlighter.colorByTokenName.values().toArray();
 
         HashSet<TextAttributesKey> valuesSet = new HashSet<TextAttributesKey>();
         for (int i = 0; i < values.length; i++)

@@ -1,14 +1,10 @@
 package myPackage;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.sdk.language.psi.DynTypes;
-import org.intellij.sdk.language.psi.SimpleTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -16,7 +12,7 @@ import java.util.HashMap;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.EMPTY_ARRAY;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
-public class SimpleSyntaxHighlighter extends SyntaxHighlighterBase {
+public class AstraSyntaxHighlighter extends SyntaxHighlighterBase {
 
     public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("IDENTIFIER");
     public static final TextAttributesKey NUMBER = createTextAttributesKey("NUMBER");
@@ -69,7 +65,7 @@ public class SimpleSyntaxHighlighter extends SyntaxHighlighterBase {
     @NotNull
     @Override
     public Lexer getHighlightingLexer() {
-        return new SimpleLexerAdapter();
+        return new LexerAdapter();
     }
 
     @Override

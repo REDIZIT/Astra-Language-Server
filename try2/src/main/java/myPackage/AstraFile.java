@@ -5,21 +5,21 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleFile extends PsiFileBase {
+public class AstraFile extends PsiFileBase {
 
-    public SimpleFile(@NotNull FileViewProvider viewProvider) {
-        super(viewProvider, SimpleLanguage.INSTANCE);
+    public AstraFile(@NotNull FileViewProvider viewProvider) {
+        super(viewProvider, AstraLanguage.INSTANCE);
     }
 
     @NotNull
     @Override
     public FileType getFileType() {
-        return SimpleFileType.INSTANCE;
+        return AstraFileType.INSTANCE;
     }
 
     @Override
     public String toString() {
-        return "Simple File";
+        return "Astra File";
     }
 
 }

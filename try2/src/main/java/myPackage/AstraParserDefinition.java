@@ -10,25 +10,22 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.intellij.sdk.language.parser.SimpleParser;
-import org.intellij.sdk.language.psi.SimpleTypes;
-import org.intellij.sdk.language.psi.impl.SimplePropertyImpl;
 import org.jetbrains.annotations.NotNull;
 
-final class SimpleParserDefinition implements ParserDefinition {
+final class AstraParserDefinition implements ParserDefinition {
 
-    public static final IFileElementType FILE = new IFileElementType(SimpleLanguage.INSTANCE);
+    public static final IFileElementType FILE = new IFileElementType(AstraLanguage.INSTANCE);
 
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
-        return new SimpleLexerAdapter();
+        return new LexerAdapter();
     }
 
     @NotNull
     @Override
     public TokenSet getCommentTokens() {
-        return SimpleTokenSets.COMMENTS;
+        return TokenSet.create(DynTypes.tokenByName.get("Token_Comment"));
     }
 
     @NotNull
@@ -40,7 +37,7 @@ final class SimpleParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiParser createParser(final Project project) {
-        return new CustomParser();
+        return new AstraParser();
     }
 
     @NotNull
@@ -52,7 +49,7 @@ final class SimpleParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiFile createFile(@NotNull FileViewProvider viewProvider) {
-        return new SimpleFile(viewProvider);
+        return new AstraFile(viewProvider);
     }
 
     @NotNull

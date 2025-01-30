@@ -3,15 +3,11 @@ package myPackage;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import org.intellij.sdk.language.psi.DynTypes;
-import org.intellij.sdk.language.psi.SimpleTypes;
 
 import java.io.IOException;
 
 
-public class CustomLexer implements FlexLexer {
+public class AstraBridgedLexer implements FlexLexer {
 
     private int lexicalState = 0;
     private int startRead = 0;
@@ -45,15 +41,14 @@ public class CustomLexer implements FlexLexer {
 
     @Override
     public IElementType advance() throws IOException {
-        // Запоминаем начало токена
         startRead = currentPos;
 
-        SimpleLanguage.INSTANCE.Send("advance");
+        AstraLanguage.INSTANCE.Send("advance");
 
-        currentPos = Integer.parseInt(SimpleLanguage.INSTANCE.ReadMessage());
-        markedPos = Integer.parseInt(SimpleLanguage.INSTANCE.ReadMessage());
+        currentPos = Integer.parseInt(AstraLanguage.INSTANCE.ReadMessage());
+        markedPos = Integer.parseInt(AstraLanguage.INSTANCE.ReadMessage());
 
-        String tokenName = SimpleLanguage.INSTANCE.ReadMessage();
+        String tokenName = AstraLanguage.INSTANCE.ReadMessage();
 
         if (tokenName.equals("Token_EOF"))
         {
@@ -66,8 +61,7 @@ public class CustomLexer implements FlexLexer {
         }
         else
         {
-            DynToken token = DynTypes.tokenByName.get(tokenName);
-            return token;
+            return DynTypes.tokenByName.get(tokenName);
         }
     }
 
@@ -81,11 +75,11 @@ public class CustomLexer implements FlexLexer {
         endRead = end;
         yybegin(initialState);
 
-        SimpleLanguage.INSTANCE.Send("reset");
-        SimpleLanguage.INSTANCE.Send(buf.toString());
-        SimpleLanguage.INSTANCE.Send(String.valueOf(start));
-        SimpleLanguage.INSTANCE.Send(String.valueOf(end));
-        SimpleLanguage.INSTANCE.Send(String.valueOf(initialState));
+        AstraLanguage.INSTANCE.Send("reset");
+        AstraLanguage.INSTANCE.Send(buf.toString());
+        AstraLanguage.INSTANCE.Send(String.valueOf(start));
+        AstraLanguage.INSTANCE.Send(String.valueOf(end));
+        AstraLanguage.INSTANCE.Send(String.valueOf(initialState));
     }
 
     public final int length() {

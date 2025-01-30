@@ -2,7 +2,6 @@ package myPackage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.lang.Language;
-import org.intellij.sdk.language.psi.DynTypes;
 
 import java.io.*;
 import java.nio.channels.Channels;
@@ -13,9 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-public class SimpleLanguage extends Language {
+public class AstraLanguage extends Language {
 
-    public static final SimpleLanguage INSTANCE = new SimpleLanguage();
+    public static final AstraLanguage INSTANCE = new AstraLanguage();
 
     private BufferedReader reader;
     private BufferedWriter writer;
@@ -23,9 +22,9 @@ public class SimpleLanguage extends Language {
 
     private ObjectMapper mapper;
 
-    private SimpleLanguage()
+    private AstraLanguage()
     {
-        super("Simple");
+        super("Astra");
 
         mapper = new ObjectMapper();
 
@@ -111,7 +110,7 @@ public class SimpleLanguage extends Language {
 
         for (String name : pack.tokenNames)
         {
-            DynToken token = new DynToken(name, this);
+            DynamicToken token = new DynamicToken(name, this);
 
             DynTypes.tokenByName.put(name, token);
         }

@@ -1,11 +1,11 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>com.example.try2</id>
+    <id>com.redizit.astralanguage</id>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Try2</name>
+    <name>Astra language</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor>REDZITI</vendor>
@@ -24,22 +24,22 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <fileType
-                name="Simple File"
-                implementationClass="myPackage.SimpleFileType"
+                name="Astra File"
+                implementationClass="myPackage.AstraFileType"
                 fieldName="INSTANCE"
-                language="Simple"
+                language="Astra"
                 extensions="ac"/>
 
         <lang.parserDefinition
-                language="Simple"
-                implementationClass="myPackage.SimpleParserDefinition"/>
+                language="Astra"
+                implementationClass="myPackage.AstraParserDefinition"/>
 
         <lang.syntaxHighlighterFactory
-                language="Simple"
-                implementationClass="myPackage.SimpleSyntaxHighlighterFactory"/>
+                language="Astra"
+                implementationClass="myPackage.AstraSyntaxHighlighterFactory"/>
 
         <colorSettingsPage
-                implementation="myPackage.SimpleColorSettingsPage"/>
+                implementation="myPackage.AstraColorSettingsPage"/>
 
     </extensions>
 </idea-plugin>
