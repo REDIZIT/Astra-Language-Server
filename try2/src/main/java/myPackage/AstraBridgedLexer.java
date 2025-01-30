@@ -25,6 +25,7 @@ public class AstraBridgedLexer implements FlexLexer {
     private int endRead = 0;
 
     private int timer;
+    private int tcpTimer, jsonTimer;
 
     @Override
     public void yybegin(int state) {
@@ -50,7 +51,7 @@ public class AstraBridgedLexer implements FlexLexer {
     public IElementType advance() throws IOException {
         startRead = currentPos;
 
-        System.out.println("__ begin advance __");
+//        System.out.println("__ begin advance __");
 
         long a = System.currentTimeMillis();
 
@@ -58,13 +59,17 @@ public class AstraBridgedLexer implements FlexLexer {
         pack.command = "advance";
 
         Package responsePack = AstraLanguage.INSTANCE.bridge.SendAndRead(pack);
+
+        tcpTimer += AstraLanguage.INSTANCE.bridge.tcpTime;
+        jsonTimer += AstraLanguage.INSTANCE.bridge.jsonTime;
+
         AdvanceResponse response = AstraLanguage.INSTANCE.bridge.mapper.convertValue(responsePack.data, new TypeReference<AdvanceResponse>() {});
 
         currentPos = response.currentPos;
         markedPos = response.markedPos;
         String tokenName = response.tokenName;
 
-        System.out.println("__ end advance __");
+//        System.out.println("__ end advance __");
 
         long b = System.currentTimeMillis();
         timer += b - a;
@@ -72,7 +77,7 @@ public class AstraBridgedLexer implements FlexLexer {
         if (tokenName.equals("Token_EOF"))
         {
             isAtEOF = true;
-            System.out.println("Whole file advanced in " + timer + " ms");
+            System.out.println("Whole file advanced in " + timer + " ms, TCP time: " + tcpTimer + " ms, JSON time: " + jsonTimer + " ms");
             return null;
         }
         else if (tokenName.equals("Token_Space"))
@@ -95,9 +100,10 @@ public class AstraBridgedLexer implements FlexLexer {
         endRead = end;
         yybegin(initialState);
 
-        System.out.println("__ begin reset__");
+//        System.out.println("__ begin reset__");
 
         timer = 0;
+        tcpTimer = 0;
 
         ResetData data = new ResetData();
         data.chars = buf.toString();
@@ -111,7 +117,8 @@ public class AstraBridgedLexer implements FlexLexer {
 
         AstraLanguage.INSTANCE.bridge.Send(pack);
 
-        System.out.println("__ end reset__");
+
+//        System.out.println("__ end reset__");
     }
 
     public final int length() {

@@ -1,42 +1,7 @@
 class Program
 {
-    public void Main(string[] args)
+    public main(): int
     {
-        string[] my_array = new string[6]
-        {
-            "abc"
-        }
-
-        Print(123);
+        return 42
     }
-}
-
-class program
-{
-	public main(): int
-	{
-		int a = 2;
-
-		return 123;
-
-		return 123;
-
-		int a = "abc" -- this is my single line commentary
-
-		if ()
-		{
-		    return 123;
-		}
-
-		if (a != 2)
-		{
-			return 10
-		}
-		else
-		{
-			return 9
-		}
-
-		return 1
-	}
 }

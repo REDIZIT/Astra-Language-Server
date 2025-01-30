@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.lang.Language;
 import myPackage.Packages.Package;
 import myPackage.Packages.TokensData;
+import org.apache.commons.compress.utils.MultiReadOnlySeekableByteChannel;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.Channels;
@@ -19,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Bridge {
 
@@ -33,27 +36,61 @@ public class Bridge {
 
     private boolean isWaitingResponse;
 
+    public long tcpTime, jsonTime;
+
     public void Begin(Language language){
 
         this.language = language;
 
         mapper = new ObjectMapper();
 
+        Process serverProc = null;
+
+
+        String serverExePath = "C:/Users/REDIZIT/Documents/GitHub/Astra-Rider-extension/LanguageServer/bin/Debug/net8.0/LanguageServer.exe";
+
         try
         {
-            socket = new Socket("127.0.0.1", 4784);
-            System.out.println("Client connected!");
+            serverProc = Runtime.getRuntime().exec("cmd /k start " + serverExePath);
+//            int code = serverProc.waitFor();
 
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            while (true)
+            {
+                try
+                {
+                    socket = new Socket("127.0.0.1", 4784);
+                    System.out.println("Client connected!");
 
-            ReadTokens();
+                    reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+                    ReadTokens();
+
+                    break;
+                }
+                catch (Exception e)
+                {
+                    System.out.println("Failed to connect: " + e.getMessage());
+                    System.out.println("Reconnecting after timeout");
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
+        finally {
+            if (serverProc != null)
+            {
+                serverProc.destroy();
+            }
+        }
 
-//        Path pipePath = Paths.get("\\\\.\\pipe\\AstraLanguageServer");
+//        Path pipePath = Paths.get("//./pipe/AstraLanguageServer");
 //        try
 //        {
 //            channel = FileChannel.open(pipePath, StandardOpenOption.READ, StandardOpenOption.WRITE);
@@ -97,11 +134,15 @@ public class Bridge {
         {
             while (isWaitingResponse){
                 System.out.println("Holding package sending...");
-                Thread.sleep(10);
+                Thread.sleep(1);
             }
 
             String json = mapper.writeValueAsString(pack);
+
+            long a = System.currentTimeMillis();
             Send(json);
+            tcpTime = System.currentTimeMillis() - a;
+
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -111,20 +152,25 @@ public class Bridge {
     {
         try
         {
-            long a = System.nanoTime();
+//            long a = System.nanoTime();
 
             while (isWaitingResponse){
                 System.out.println("Holding package sending...");
-                Thread.sleep(10);
+                Thread.sleep(1);
             }
 
             isWaitingResponse = true;
 
             String json = mapper.writeValueAsString(pack);
+
+            long a = System.currentTimeMillis();
             Send(json);
+            tcpTime = System.currentTimeMillis() - a;
+
             Package response = Read();
 
-            System.out.println("Responded in " + ((System.nanoTime() - a) / 1000000) + " ms");
+
+//            System.out.println("Responded in " + ((System.nanoTime() - a) / 1000000) + " ms");
 
             isWaitingResponse = false;
             return response;
@@ -139,14 +185,20 @@ public class Bridge {
         }
     }
     public Package Read() throws IOException {
+        long a = System.currentTimeMillis();
         String message = ReadMessage();
+        tcpTime += System.currentTimeMillis() - a;
+
+        long b = System.currentTimeMillis();
         Package pack = mapper.readerFor(Package.class).readValue(message);
+        jsonTime = System.currentTimeMillis() - b;
+
         return pack;
     }
 
     private void Send(String message){
         try {
-            System.out.println("... sending ... " + message);
+//            System.out.println("... sending ... " + message);
 
             writer.write(message.length() + "\n");
             writer.write(message);
@@ -158,7 +210,7 @@ public class Bridge {
 
     private String ReadMessage() throws IOException {
 
-        System.out.println("... reading ...");
+//        System.out.println("... reading ...");
 
         String line = reader.readLine();
 
@@ -169,7 +221,7 @@ public class Bridge {
             chars[i] = (char) reader.read();
         }
 
-        System.out.println("> " + new String(chars));
+//        System.out.println("> " + new String(chars));
 
         return new String(chars);
     }

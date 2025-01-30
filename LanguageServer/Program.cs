@@ -1,7 +1,7 @@
 ﻿using Astra.Compilation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.IO.Pipes;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -15,8 +15,12 @@ public static class Program
 
     private static Lexer lexer = new();
 
+    private static long timer;
+
     public static void Main()
     {
+        bool isSingleRun = true;
+
         while (true)
         {
             try
@@ -67,6 +71,11 @@ public static class Program
             {
                 Console.WriteLine($"Restart connection due to exception: {err.Message}");
             }
+
+            if (isSingleRun)
+            {
+                break;
+            }
         }
     }
 
@@ -74,14 +83,14 @@ public static class Program
     {
         //Console.WriteLine("Received: " + input);
         Package request = JsonConvert.DeserializeObject<Package>(input);
-
-
         if (request.command == "reset")
         {
             var obj = (JObject)request.data;
             ResetData data = obj.ToObject<ResetData>();
 
             List<char> chars = data.chars.ToList();
+
+            timer = 0;
 
             int start = data.start;
             int end = data.end;
@@ -91,6 +100,8 @@ public static class Program
         }
         else if (request.command == "advance")
         {
+            Stopwatch w = Stopwatch.StartNew();
+
             Token token = lexer.Advance();
 
             Package pack = new()
@@ -105,6 +116,13 @@ public static class Program
             };
 
             Send(pack);
+
+            timer += w.ElapsedMilliseconds;
+            if (token is Token_EOF)
+            {
+                Console.WriteLine("Whole file advanced in " + timer + " ms");
+            }
+
         }
         else if (request.command == "parse")
         {
@@ -120,14 +138,9 @@ public static class Program
         }
     }
 
-    //private static Package Read()
-    //{
-    //    string json = ReadMessage();
-    //    return JsonConvert.DeserializeObject<Package>(json);
-    //}
     private static string ReadMessage()
     {
-        Console.WriteLine("... read message ...");
+        //Console.WriteLine("... read message ...");
 
         string line = reader.ReadLine();
         if (line == null) throw new Exception("Message is null. Client is bad.");
@@ -142,7 +155,7 @@ public static class Program
 
         string message = string.Concat(buffer);
 
-        Console.WriteLine("> " + message);
+        //Console.WriteLine("> " + message);
 
         return message;
     }
@@ -154,7 +167,7 @@ public static class Program
     }
     private static void SendMessage(string message)
     {
-        Console.WriteLine("... write message ... " + message);
+        //Console.WriteLine("... write message ... " + message);
 
         writer.WriteLine(message.Length);
         writer.Write(message);
