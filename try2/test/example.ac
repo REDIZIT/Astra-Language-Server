@@ -1,7 +1,13 @@
 class Program
 {
     public main(): int
-    {
-        return 42
+
+        return
     }
+
+    public main2(): int
+    {
+
+    }
+    
 }

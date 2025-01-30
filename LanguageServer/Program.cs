@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
@@ -14,38 +15,20 @@ public static class Program
     private static List<char> buffer = new();
 
     private static Lexer lexer = new();
+    private static AstraAST ast = new();
 
     private static long timer;
 
     public static void Main()
     {
         bool isSingleRun = true;
+        bool isThrowingExceptions = true;
 
         while (true)
         {
             try
             {
-                //using (NamedPipeServerStream pipeServer = new NamedPipeServerStream("AstraLanguageServer", PipeDirection.InOut))
-                //{
-                //    Console.WriteLine("Client awaiting...");
-                //    pipeServer.WaitForConnection();
-                //    Console.WriteLine("Client connected.");
-
-                //    using (reader = new StreamReader(pipeServer))
-                //    using (writer = new StreamWriter(pipeServer) { AutoFlush = true })
-                //    {
-                //        WriteTokens();
-
-                //        while (true)
-                //        {
-                //            string input = ReadMessage();
-                //            if (input == "CLOSE") break;
-
-                //            OnReceived(input);
-                //        }
-                //    }
-                //}
-                using (TcpListener listener = new TcpListener(4784))
+                using (TcpListener listener = new(IPAddress.Loopback, 4784))
                 {
                     listener.Start();
                     Console.WriteLine("TCP Client awaiting...");
@@ -70,6 +53,11 @@ public static class Program
             catch (Exception err)
             {
                 Console.WriteLine($"Restart connection due to exception: {err.Message}");
+
+                if (isThrowingExceptions)
+                {
+                    throw;
+                }
             }
 
             if (isSingleRun)
@@ -126,11 +114,7 @@ public static class Program
         }
         else if (request.command == "parse")
         {
-            //List<Token> tokens = JsonConvert.DeserializeObject<List<Token>>(ReadMessage());
-
-            //List<Node> ast = AbstractSyntaxTreeBuilder.Parse(tokens);
-
-            //SendMessage(JsonConvert.SerializeObject(ast));
+            WriteParse((string)request.data);
         }
         else
         {
@@ -196,39 +180,42 @@ public static class Program
         Send(pack);
     }
 
-    private static void WriteParse(List<Node> tokens)
+    private static void WriteParse(string astraCode)
     {
-        List<string> names = tokens.Select(t => t.GetType().Name).ToList();
+        List<Token> tokens = lexer.Tokenize(astraCode, false);
+        List<Token> tokensWithSpaces = lexer.Tokenize(astraCode, true);
 
-        string json = JsonConvert.SerializeObject(names);
+        Console.WriteLine("Tokens with spaces: " + tokensWithSpaces.Count + ", without: " + tokens.Count);
 
-        SendMessage(json);
-    }
+        ErrorLogger logger = new();
 
-    public class TokensData
-    {
-        public List<string> tokenNames = new();
+        List<Node> nodes = ast.Parse(tokens, logger);
 
-        [JsonIgnore]
-        public Dictionary<string, Type> typeByName = new();
-    }
+        Console.WriteLine("Errors: " + logger.entries.Count);
+
+        ParserData data = new ParserData()
+        {
+            entries = new LogEntries()
+            {
+                markers = logger.entries.ToArray()
+            }
+        };
+
+        Package pack = new Package()
+        {
+            command = "",
+            data = data
+        };
+
+        Send(pack);
+    }    
 }
 
-public class Package
+
+
+
+public class ParserData
 {
-    public string command;
-    public object data;
+    public LogEntries entries;
 }
-public class ResetData
-{
-    public string chars;
-    public int start;
-    public int end;
-    public int initialState;
-}
-public class AdvanceResponse
-{
-    public int currentPos;
-    public int markedPos;
-    public string tokenName;
-}
+
