@@ -1,7 +1,10 @@
 ﻿using Astra.Compilation;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IO.Pipes;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 
 public static class Program
 {
@@ -18,24 +21,45 @@ public static class Program
         {
             try
             {
-                using (NamedPipeServerStream pipeServer = new NamedPipeServerStream("AstraLanguageServer", PipeDirection.InOut))
+                //using (NamedPipeServerStream pipeServer = new NamedPipeServerStream("AstraLanguageServer", PipeDirection.InOut))
+                //{
+                //    Console.WriteLine("Client awaiting...");
+                //    pipeServer.WaitForConnection();
+                //    Console.WriteLine("Client connected.");
+
+                //    using (reader = new StreamReader(pipeServer))
+                //    using (writer = new StreamWriter(pipeServer) { AutoFlush = true })
+                //    {
+                //        WriteTokens();
+
+                //        while (true)
+                //        {
+                //            string input = ReadMessage();
+                //            if (input == "CLOSE") break;
+
+                //            OnReceived(input);
+                //        }
+                //    }
+                //}
+                using (TcpListener listener = new TcpListener(4784))
                 {
-                    Console.WriteLine("Client awaiting...");
-                    pipeServer.WaitForConnection();
-                    Console.WriteLine("Client connected.");
+                    listener.Start();
+                    Console.WriteLine("TCP Client awaiting...");
+                    var client = listener.AcceptTcpClient();
+                    Console.WriteLine("TCP Client connected.");
 
-                    using (reader = new StreamReader(pipeServer))
-                    using (writer = new StreamWriter(pipeServer) { AutoFlush = true })
+                    NetworkStream stream = client.GetStream();
+                    writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
+                    reader = new StreamReader(stream, Encoding.ASCII);
+
+                    WriteTokens();
+
+                    while (true)
                     {
-                        WriteTokens();
+                        string input = ReadMessage();
+                        if (input == "CLOSE") break;
 
-                        while (true)
-                        {
-                            string input = ReadMessage();
-                            if (input == "CLOSE") break;
-
-                            OnReceived(input);
-                        }
+                        OnReceived(input);
                     }
                 }
             }
@@ -49,32 +73,46 @@ public static class Program
     private static void OnReceived(string input)
     {
         //Console.WriteLine("Received: " + input);
+        Package request = JsonConvert.DeserializeObject<Package>(input);
 
-        if (input == "reset")
+
+        if (request.command == "reset")
         {
-            List<char> chars = ReadMessage().ToList();
+            var obj = (JObject)request.data;
+            ResetData data = obj.ToObject<ResetData>();
 
-            int start = int.Parse(ReadMessage());
-            int end = int.Parse(ReadMessage());
-            int initialState = int.Parse(ReadMessage());
+            List<char> chars = data.chars.ToList();
+
+            int start = data.start;
+            int end = data.end;
+            int initialState = data.initialState;
 
             lexer.Reset(chars, start, end, initialState);
         }
-        else if (input == "advance")
+        else if (request.command == "advance")
         {
             Token token = lexer.Advance();
 
-            SendMessage(lexer.currentPos.ToString());
-            SendMessage(lexer.markedPos.ToString());
-            SendMessage(token.GetType().Name);
+            Package pack = new()
+            {
+                command = "",
+                data = new AdvanceResponse()
+                {
+                    currentPos = lexer.currentPos,
+                    markedPos = lexer.markedPos,
+                    tokenName = token.GetType().Name
+                }
+            };
+
+            Send(pack);
         }
-        else if (input == "parse")
+        else if (request.command == "parse")
         {
-            List<Token> tokens = JsonConvert.DeserializeObject<List<Token>>(ReadMessage());
+            //List<Token> tokens = JsonConvert.DeserializeObject<List<Token>>(ReadMessage());
 
-            List<Node> ast = AbstractSyntaxTreeBuilder.Parse(tokens);
+            //List<Node> ast = AbstractSyntaxTreeBuilder.Parse(tokens);
 
-            SendMessage(JsonConvert.SerializeObject(ast));
+            //SendMessage(JsonConvert.SerializeObject(ast));
         }
         else
         {
@@ -82,9 +120,19 @@ public static class Program
         }
     }
 
+    //private static Package Read()
+    //{
+    //    string json = ReadMessage();
+    //    return JsonConvert.DeserializeObject<Package>(json);
+    //}
     private static string ReadMessage()
     {
-        int messageLength = int.Parse(reader.ReadLine());
+        Console.WriteLine("... read message ...");
+
+        string line = reader.ReadLine();
+        if (line == null) throw new Exception("Message is null. Client is bad.");
+
+        int messageLength = int.Parse(line);
         buffer.Clear();
 
         for (int i = 0; i < messageLength; i++)
@@ -94,12 +142,20 @@ public static class Program
 
         string message = string.Concat(buffer);
 
-        //Console.WriteLine("> " + message);
+        Console.WriteLine("> " + message);
 
         return message;
     }
+
+    private static void Send(Package pack)
+    {
+        string json = JsonConvert.SerializeObject(pack);
+        SendMessage(json);
+    }
     private static void SendMessage(string message)
     {
+        Console.WriteLine("... write message ... " + message);
+
         writer.WriteLine(message.Length);
         writer.Write(message);
     }
@@ -107,27 +163,28 @@ public static class Program
 
     private static void WriteTokens()
     {
-        TokensPackage tokensPackage = new();
+        TokensData data = new();
 
         foreach (Type type in Assembly.GetAssembly(typeof(Token)).GetTypes())
         {
             if (typeof(Token).IsAssignableFrom(type) && type != typeof(Token))
             {
-                tokensPackage.tokenNames.Add(type.Name);
-                tokensPackage.typeByName.Add(type.Name, type);
+                data.tokenNames.Add(type.Name);
+                data.typeByName.Add(type.Name, type);
             }
         }
 
-        string json = JsonConvert.SerializeObject(tokensPackage);
-        Console.WriteLine("Send tokens: " + json);
+        Package pack = new Package()
+        {
+            command = "tokens",
+            data = data
+        };
 
-        SendMessage(json);
+        Send(pack);
     }
 
     private static void WriteParse(List<Node> tokens)
     {
-
-
         List<string> names = tokens.Select(t => t.GetType().Name).ToList();
 
         string json = JsonConvert.SerializeObject(names);
@@ -135,11 +192,30 @@ public static class Program
         SendMessage(json);
     }
 
-    public class TokensPackage
+    public class TokensData
     {
         public List<string> tokenNames = new();
 
         [JsonIgnore]
         public Dictionary<string, Type> typeByName = new();
     }
+}
+
+public class Package
+{
+    public string command;
+    public object data;
+}
+public class ResetData
+{
+    public string chars;
+    public int start;
+    public int end;
+    public int initialState;
+}
+public class AdvanceResponse
+{
+    public int currentPos;
+    public int markedPos;
+    public string tokenName;
 }

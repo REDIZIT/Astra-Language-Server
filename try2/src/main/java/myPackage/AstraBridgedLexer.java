@@ -1,8 +1,13 @@
 package myPackage;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import myPackage.Packages.AdvanceResponse;
+import myPackage.Packages.Package;
+import myPackage.Packages.ResetData;
+import myPackage.Packages.TokensData;
 
 import java.io.IOException;
 
@@ -18,6 +23,8 @@ public class AstraBridgedLexer implements FlexLexer {
     private boolean isAtEOF;
     private boolean isAtBOL;
     private int endRead = 0;
+
+    private int timer;
 
     @Override
     public void yybegin(int state) {
@@ -43,16 +50,29 @@ public class AstraBridgedLexer implements FlexLexer {
     public IElementType advance() throws IOException {
         startRead = currentPos;
 
-        AstraLanguage.INSTANCE.Send("advance");
+        System.out.println("__ begin advance __");
 
-        currentPos = Integer.parseInt(AstraLanguage.INSTANCE.ReadMessage());
-        markedPos = Integer.parseInt(AstraLanguage.INSTANCE.ReadMessage());
+        long a = System.currentTimeMillis();
 
-        String tokenName = AstraLanguage.INSTANCE.ReadMessage();
+        Package pack = new Package();
+        pack.command = "advance";
+
+        Package responsePack = AstraLanguage.INSTANCE.bridge.SendAndRead(pack);
+        AdvanceResponse response = AstraLanguage.INSTANCE.bridge.mapper.convertValue(responsePack.data, new TypeReference<AdvanceResponse>() {});
+
+        currentPos = response.currentPos;
+        markedPos = response.markedPos;
+        String tokenName = response.tokenName;
+
+        System.out.println("__ end advance __");
+
+        long b = System.currentTimeMillis();
+        timer += b - a;
 
         if (tokenName.equals("Token_EOF"))
         {
             isAtEOF = true;
+            System.out.println("Whole file advanced in " + timer + " ms");
             return null;
         }
         else if (tokenName.equals("Token_Space"))
@@ -75,11 +95,23 @@ public class AstraBridgedLexer implements FlexLexer {
         endRead = end;
         yybegin(initialState);
 
-        AstraLanguage.INSTANCE.Send("reset");
-        AstraLanguage.INSTANCE.Send(buf.toString());
-        AstraLanguage.INSTANCE.Send(String.valueOf(start));
-        AstraLanguage.INSTANCE.Send(String.valueOf(end));
-        AstraLanguage.INSTANCE.Send(String.valueOf(initialState));
+        System.out.println("__ begin reset__");
+
+        timer = 0;
+
+        ResetData data = new ResetData();
+        data.chars = buf.toString();
+        data.start = start;
+        data.end = end;
+        data.initialState = initialState;
+
+        Package pack = new Package();
+        pack.command = "reset";
+        pack.data = data;
+
+        AstraLanguage.INSTANCE.bridge.Send(pack);
+
+        System.out.println("__ end reset__");
     }
 
     public final int length() {
