@@ -24,11 +24,7 @@ public interface SimpleTypes {
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
-      IElementType type = node.getElementType();
-      if (type == PROPERTY) {
-        return new SimplePropertyImpl(node);
-      }
-      throw new AssertionError("Unknown element type: " + type);
+      return new SimplePropertyImpl(node);
     }
   }
 }

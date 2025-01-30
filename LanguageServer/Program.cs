@@ -68,6 +68,14 @@ public static class Program
             SendMessage(lexer.markedPos.ToString());
             SendMessage(token.GetType().Name);
         }
+        else if (input == "parse")
+        {
+            List<Token> tokens = JsonConvert.DeserializeObject<List<Token>>(ReadMessage());
+
+            List<Node> ast = AbstractSyntaxTreeBuilder.Parse(tokens);
+
+            SendMessage(JsonConvert.SerializeObject(ast));
+        }
         else
         {
             throw new Exception($"Unknown command: '{input}'");
@@ -106,6 +114,7 @@ public static class Program
             if (typeof(Token).IsAssignableFrom(type) && type != typeof(Token))
             {
                 tokensPackage.tokenNames.Add(type.Name);
+                tokensPackage.typeByName.Add(type.Name, type);
             }
         }
 
@@ -115,8 +124,22 @@ public static class Program
         SendMessage(json);
     }
 
+    private static void WriteParse(List<Node> tokens)
+    {
+
+
+        List<string> names = tokens.Select(t => t.GetType().Name).ToList();
+
+        string json = JsonConvert.SerializeObject(names);
+
+        SendMessage(json);
+    }
+
     public class TokensPackage
     {
         public List<string> tokenNames = new();
+
+        [JsonIgnore]
+        public Dictionary<string, Type> typeByName = new();
     }
 }

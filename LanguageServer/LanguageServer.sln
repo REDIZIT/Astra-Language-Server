@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer", "LanguageS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AstraNASM", "..\..\AstraNASM\AstraNASM\AstraNASM.csproj", "{AE6E67C2-93BB-4DA6-B56F-0B4B1E338918}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AstraTests", "..\..\AstraNASM\Tests\AstraTests.csproj", "{33960697-3E5C-49A1-9C76-86943C828C9A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nasm simulator", "..\..\AstraNASM\nasm simulator\nasm simulator.csproj", "{BB880F5C-7064-4734-A5C6-F5EE57BAF6C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{AE6E67C2-93BB-4DA6-B56F-0B4B1E338918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE6E67C2-93BB-4DA6-B56F-0B4B1E338918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE6E67C2-93BB-4DA6-B56F-0B4B1E338918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33960697-3E5C-49A1-9C76-86943C828C9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33960697-3E5C-49A1-9C76-86943C828C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33960697-3E5C-49A1-9C76-86943C828C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33960697-3E5C-49A1-9C76-86943C828C9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB880F5C-7064-4734-A5C6-F5EE57BAF6C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB880F5C-7064-4734-A5C6-F5EE57BAF6C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB880F5C-7064-4734-A5C6-F5EE57BAF6C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB880F5C-7064-4734-A5C6-F5EE57BAF6C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
