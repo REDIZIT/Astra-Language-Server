@@ -12,7 +12,7 @@ public class AstraLanguage extends Language {
     {
         super("Astra");
 
-        bridge = new Bridge();
-        bridge.Begin(this);
+//        bridge = new Bridge();
+//        bridge.Begin(this);
     }
 }

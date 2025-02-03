@@ -19,7 +19,20 @@ public static class Program
 
     private static long timer;
 
-    public static void Main()
+    public static void Main(string[] args)
+    {
+        if (args.Length > 0)
+        {
+            Console.WriteLine("Run as LSP");
+            Console.ReadLine();
+        }
+        else
+        {
+            RunAsTCP();
+        }
+    }
+
+    private static void RunAsTCP()
     {
         bool isSingleRun = true;
         bool isThrowingExceptions = true;
@@ -69,7 +82,9 @@ public static class Program
 
     private static void OnReceived(string input)
     {
-        //Console.WriteLine("Received: " + input);
+        Console.WriteLine("Received: " + input);
+
+
         Package request = JsonConvert.DeserializeObject<Package>(input);
         if (request.command == "reset")
         {
