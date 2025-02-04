@@ -35,16 +35,16 @@
                 language="Astra"
                 extensions="ac"/>
 
-        <lang.parserDefinition
-                language="Astra"
-                implementationClass="myPackage.AstraParserDefinition"/>
+<!--        <lang.parserDefinition-->
+<!--                language="Astra"-->
+<!--                implementationClass="myPackage.AstraParserDefinition"/>-->
 
-        <lang.syntaxHighlighterFactory
-                language="Astra"
-                implementationClass="myPackage.AstraSyntaxHighlighterFactory"/>
+<!--        <lang.syntaxHighlighterFactory-->
+<!--                language="Astra"-->
+<!--                implementationClass="myPackage.AstraSyntaxHighlighterFactory"/>-->
 
-        <colorSettingsPage
-                implementation="myPackage.AstraColorSettingsPage"/>
+<!--        <colorSettingsPage-->
+<!--                implementation="myPackage.AstraColorSettingsPage"/>-->
 
         <platform.lsp.serverSupportProvider implementation="myPackage.AstraLspServerSupportProvider"/>
 

@@ -1,6 +1,9 @@
 ﻿using Astra.Compilation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Core;
+using StreamJsonRpc;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -19,17 +22,55 @@ public static class Program
 
     private static long timer;
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        if (args.Length > 0)
+        LanguageServerHost host = null;
+        //CustomLanguageServer host = null;
+
+        string logFile = "C:\\Users\\REDIZIT\\Documents\\GitHub\\Astra-Rider-extension\\LanguageServer\\lsp.log";
+        Logger logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File(logFile)
+                .CreateLogger();
+
+        try
         {
-            Console.WriteLine("Run as LSP");
-            Console.ReadLine();
+            logger.Information("Begin");
+
+
+            //host = await LanguageServerHost.Create(Console.OpenStandardInput(), Console.OpenStandardOutput(), logger, Microsoft.Extensions.Logging.LogLevel.Trace);
+            //await host.WaitForExit;
+
+            //await CustomLanguageServer.Create(Console.OpenStandardInput(), Console.OpenStandardOutput(), logFile);
+
+            //using var reader = new StreamReader(stdin);
+            //using var writer = new StreamWriter(stdout) { AutoFlush = true };
+
+
+
+
+
+            var rpc = new JsonRpc(Console.OpenStandardOutput(), Console.OpenStandardInput());
+
+            rpc.AddLocalRpcTarget(new CustomLanguageServer(logger));
+            rpc.StartListening();
+
+            await rpc.Completion;
+
+
+
+            logger.Information("End");
         }
-        else
+        catch (Exception err)
         {
-            RunAsTCP();
+            logger.Error(err, "Err");
+
+            throw;
         }
+        finally
+        {
+            if (host != null) host.Dispose();
+        }       
     }
 
     private static void RunAsTCP()
