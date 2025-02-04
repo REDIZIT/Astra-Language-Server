@@ -1,7 +1,20 @@
-first line
-second line
-asdas line
-third line
+class program
 {
-    "abc": 123
+	public main(): int
+	{
+		string str = "Hello from Astra"
+		ptr str_pointer = str.to_ptr()
+		ptr vga_pointer
+
+		vga_pointer.address = new 0xB8000
+
+		return 0x234
+
+		for ()
+		{
+			"123"
+		}
+
+		string str = "12333"
+	}
 }

@@ -24,8 +24,8 @@ public static class Program
 
     public static async Task Main(string[] args)
     {
-        LanguageServerHost host = null;
-        //CustomLanguageServer host = null;
+        //LanguageServerHost host = null;
+        CustomLanguageServer host = null;
 
         string logFile = "C:\\Users\\REDIZIT\\Documents\\GitHub\\Astra-Rider-extension\\LanguageServer\\lsp.log";
         Logger logger = new LoggerConfiguration()
@@ -52,7 +52,9 @@ public static class Program
 
             var rpc = new JsonRpc(Console.OpenStandardOutput(), Console.OpenStandardInput());
 
-            rpc.AddLocalRpcTarget(new CustomLanguageServer(logger));
+            host = new CustomLanguageServer(logger);
+
+            rpc.AddLocalRpcTarget(host);
             rpc.StartListening();
 
             await rpc.Completion;

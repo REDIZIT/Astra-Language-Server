@@ -1,17 +1,126 @@
-﻿using LspTypes;
+﻿using Astra.Compilation;
+using LspTypes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Core;
 using StreamJsonRpc;
 
+public class ColorTokenGroup
+{
+    public string name;
+    public HashSet<Type> compilerTokenTypes;
+}
 public class CustomLanguageServer
 {
     private Logger logger;
+    private Workspace workspace;
+
+    private ColorTokenGroup[] groups = new ColorTokenGroup[]
+    {
+        new ColorTokenGroup()
+        {
+            name = "invalid",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_Bad)
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "identifier",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_Identifier)
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "typename",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_TypeName)
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "keyword",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_New),
+                typeof(Token_Visibility),
+                typeof(Token_Class),
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "keyword.control",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_Return),
+                typeof(Token_If),
+                typeof(Token_Else),
+                typeof(Token_For),
+                typeof(Token_While),
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "punctuation",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_BracketOpen),
+                typeof(Token_BracketClose),
+                typeof(Token_BlockOpen),
+                typeof(Token_BlockClose),
+                typeof(Token_SquareBracketOpen),
+                typeof(Token_SquareBracketClose),
+                typeof(Token_Assign),
+                typeof(Token_Terminator),
+                typeof(Token_Colon),
+                typeof(Token_Comma),
+                typeof(Token_Dot),
+
+                typeof(Token_Operator),
+                typeof(Token_Equality),
+                typeof(Token_Comprassion),
+                typeof(Token_AddSub),
+                typeof(Token_Factor),
+                typeof(Token_Unary),
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "number",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_Constant),
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "string",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_String),
+                typeof(Token_Char),
+            }
+        },
+        new ColorTokenGroup()
+        {
+            name = "comment",
+            compilerTokenTypes = new HashSet<Type>()
+            {
+                typeof(Token_Comment),
+            }
+        },
+    };
 
     public CustomLanguageServer(Logger logger)
     {
         this.logger = logger;
+
+        workspace = new Workspace(logger);
     }
 
     public void Dispose()
@@ -30,8 +139,6 @@ public class CustomLanguageServer
     {
         logger.Information("Custom language init");
 
-        //InitializedParams initializedParams = 
-        //logger.Information(capabilities.ToString());
 
         return new InitializeResult()
         {
@@ -51,7 +158,6 @@ public class CustomLanguageServer
                         IncludeText = true
                     }
                 },
-                DocumentHighlightProvider = false,
                 HoverProvider = true,
                 DocumentSymbolProvider = false,
                 ColorProvider = false,
@@ -61,18 +167,11 @@ public class CustomLanguageServer
                     Range = false,
                     Legend = new SemanticTokensLegend()
                     {
-                        tokenTypes = new string[] {
-                                "class",
-                                "variable",
-                                "enum",
-                                "comment",
-                                "string",
-                                "keyword",
-                            },
+                        tokenTypes = groups.Select(g => g.name).ToArray(),
                         tokenModifiers = new string[] {
-                                "declaration",
-                                "documentation",
-                            }
+                            "declaration",
+                            "documentation",
+                        }
                     }
                 },
             }
@@ -88,18 +187,26 @@ public class CustomLanguageServer
     [JsonRpcMethod(Methods.TextDocumentDidOpenName)]
     public void DidOpen(JToken arg)
     {
-        logger.Information("Did open");
+        DidOpenTextDocumentParams p = arg.ToObject<DidOpenTextDocumentParams>();
+
+        workspace.LoadFile(p.TextDocument);
     }
 
-    [JsonRpcMethod(Methods.TextDocumentDocumentHighlightName)]
-    public object[] TextDocumentDocumentHighlightName(JToken arg)
+    [JsonRpcMethod(Methods.TextDocumentDidChangeName)]
+    public void DidChange(JToken arg)
     {
-        logger.Information("HIGHLIGHT NAME!!!");
+        DidChangeTextDocumentParams p = arg.ToObject<DidChangeTextDocumentParams>();
 
-        object[] result = new object[0];
-
-        return result;
+        workspace.ChangeFile(p);
     }
+
+    //[JsonRpcMethod(Methods.TextDocumentDocumentHighlightName)]
+    //public object[] TextDocumentDocumentHighlightName(JToken arg)
+    //{
+    //    object[] result = new object[0];
+
+    //    return result;
+    //}
 
     [JsonRpcMethod(Methods.TextDocumentDocumentSymbolName)]
     public object[] TextDocumentDocumentSymbolName(JToken arg)
@@ -112,7 +219,7 @@ public class CustomLanguageServer
     [JsonRpcMethod(Methods.TextDocumentHoverName)]
     public object TextDocumentHoverName(JToken arg)
     {
-        logger.Information("Hover");
+        //logger.Information("Hover");
 
         return null;
     }
@@ -120,30 +227,59 @@ public class CustomLanguageServer
     [JsonRpcMethod(Methods.TextDocumentSemanticTokensFull)]
     public object TextDocumentSemanticTokensFull(JToken arg)
     {
-        logger.Information("TextDocumentSemanticTokensFull");
-
         SemanticTokensParams p = arg.ToObject<SemanticTokensParams>();
 
+        logger.Information("Semantics handle: " + JsonConvert.SerializeObject(p));
+
+
         logger.Information(p.TextDocument.Uri);
+       
+        var astraTokens = workspace.GetTokens(p.TextDocument.Uri);
+
         SemanticTokens tokens = new();
 
         List<uint> data = new();
 
-        data.Add(0);
-        data.Add(0);
-        data.Add(5);
-        data.Add(0);
-        data.Add(0);
+        int prevLine = 0;
+        int prevStart = 0;
 
-        data.Add(1);
-        data.Add(0);
-        data.Add(10);
-        data.Add(1);
-        data.Add(0);
+        foreach (Token token in astraTokens)
+        {
+            int deltaLine = token.line - prevLine;
+            int deltaStart = token.linedBegin - prevStart;
+            int length = token.end - token.begin;
+            int tokenType = GetTokenType(token);
+            int tokenModifiers = 0;
+
+            prevLine = token.line;
+            prevStart = token.linedBegin;
+
+
+            data.Add((uint)deltaLine);
+            data.Add((uint)deltaStart);
+            data.Add((uint)length);
+            data.Add((uint)tokenType);
+            data.Add((uint)tokenModifiers);
+        }
 
         tokens.Data = data.ToArray();
 
         return tokens;
+    }
+
+    private int GetTokenType(Token token)
+    {
+        for (int i = 0; i < groups.Length; i++)
+        {
+            ColorTokenGroup group = groups[i];
+
+            if (group.compilerTokenTypes.Contains(token.GetType()))
+            {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     //[JsonRpcMethod("textDocument/documentColor")]
@@ -157,12 +293,4 @@ public class CustomLanguageServer
 
     [JsonRpcMethod("exit")]
     public void Exit() => Environment.Exit(0);
-}
-
-public class TextDocumentItem
-{
-    public string uri;
-    public string languageId;
-    public int version;
-    public string text;
 }
