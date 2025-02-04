@@ -6,14 +6,23 @@ class program
 		ptr str_pointer = str.to_ptr()
 		ptr vga_pointer
 
-		vga_pointer.address = new 0xB8000
+		---
+		1231
+		str
+		bc
+		sa
+		str
+		bcc
+		---
+
+		str_pointer.do()
+
+		-- if abx
+		-- {
+
+		-- }
 
 		return 0x234
-
-		for ()
-		{
-			"123"
-		}
 
 		string str = "12333"
 	}

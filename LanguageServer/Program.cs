@@ -52,7 +52,7 @@ public static class Program
 
             var rpc = new JsonRpc(Console.OpenStandardOutput(), Console.OpenStandardInput());
 
-            host = new CustomLanguageServer(logger);
+            host = new CustomLanguageServer(logger, rpc);
 
             rpc.AddLocalRpcTarget(host);
             rpc.StartListening();

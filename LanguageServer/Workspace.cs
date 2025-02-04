@@ -1,5 +1,6 @@
 ﻿using Astra.Compilation;
 using LspTypes;
+using Newtonsoft.Json;
 using Serilog.Core;
 
 public class Workspace
@@ -9,6 +10,7 @@ public class Workspace
     private Dictionary<string, VirtualFile> fileByUri = new();
 
     private Lexer lexer = new();
+    private AstraAST parser = new();
 
     public Workspace(Logger logger)
     {
@@ -21,9 +23,9 @@ public class Workspace
 
         VirtualFile file = new();
         file.chars = doc.Text.ToCharArray().ToList();
-        RetokenizeFile(file);
-
         fileByUri.Add(doc.Uri, file);
+
+        RetokenizeFile(doc.Uri);
     }
 
     public void ChangeFile(DidChangeTextDocumentParams p)
@@ -42,14 +44,59 @@ public class Workspace
             //logger.Information("Change: '" + e.Text + "' at " + e.Range.Start.Line + "." + e.Range.Start.Character + ":" + e.Range.End.Line + "." + e.Range.End.Character + " = " + e.RangeLength);
         }
 
-        logger.Information("File after changes:\n" + string.Concat(file.chars));
+        //logger.Information("File after changes:\n" + string.Concat(file.chars));
 
-        RetokenizeFile(file);
+        RetokenizeFile(p.TextDocument.Uri);
     }
 
-    public void RetokenizeFile(VirtualFile file)
+    public void RetokenizeFile(string fileUri)
     {
+        VirtualFile file = fileByUri[fileUri];
+
         file.tokens = lexer.Tokenize(file.chars, false);
+    }
+
+    public PublishDiagnosticParams Analyze(string fileUri)
+    {
+        VirtualFile file = fileByUri[fileUri];
+
+        ErrorLogger errorLogger = new();
+        file.nodes = parser.Parse(file.tokens, errorLogger);
+
+
+        PublishDiagnosticParams p = new()
+        {
+            Uri = fileUri,
+            Diagnostics = new Diagnostic[errorLogger.entries.Count]
+        };
+
+        for (int i = 0; i < errorLogger.entries.Count; i++)
+        {
+            LogEntry e = errorLogger.entries[i];
+
+            //Token beginToken = file.tokens[e.tokenBeginIndex];
+            //Token endToken = file.tokens[e.tokenEndIndex];
+            Token token = e.token;
+
+            logger.Information(JsonConvert.SerializeObject(e));
+
+            p.Diagnostics[i] = new Diagnostic()
+            {
+                Message = e.message,
+                Severity = DiagnosticSeverity.Error,
+                Range = new LspTypes.Range()
+                {
+                    Start = new Position((uint)token.line, (uint)token.linedBegin),
+                    End = new Position((uint)token.line, (uint)token.linedBegin + (uint)(token.end - token.begin))
+                },
+                //Source = "Test source",
+                //Code = "public"
+            };
+        }
+
+        //logger.Information("Parsed with " + errorLogger.entries.Count + " errors");
+
+        return p;
     }
 
     public List<Token> GetTokens(string fileUri)
@@ -63,6 +110,7 @@ public class VirtualFile
 {
     public List<char> chars;
     public List<Token> tokens;
+    public List<Node> nodes;
 
     public int GetLineIndex(uint line)
     {

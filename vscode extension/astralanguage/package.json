@@ -23,7 +23,11 @@
         "id": "Astra",
         "aliases": ["Astra"],
         "extensions": [".ac"],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+           "light": "./icons/16x16.png",
+           "dark": "./icons/16x16.png"
+         }
       }
     ]
   },
