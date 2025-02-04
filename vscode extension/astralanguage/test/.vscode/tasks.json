@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{   
+			"label": "Compile Astra to NASM",
+			"type": "shell",
+			"command": "AstraNASM compile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{   
+			"label": "Simulate NASM",
+			"type": "shell",
+			"command": "C:/Users/REDIZIT/Documents/GitHub/AstraNASM/nasm simulator/bin/Debug/net8.0/nasm simulator.exe",
+			"args": ["run"]
+		}
+	]
+}
