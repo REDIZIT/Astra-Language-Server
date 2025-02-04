@@ -1,6 +1,9 @@
 ﻿using Astra.Compilation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Core;
+using StreamJsonRpc;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -19,7 +22,60 @@ public static class Program
 
     private static long timer;
 
-    public static void Main()
+    public static async Task Main(string[] args)
+    {
+        //LanguageServerHost host = null;
+        CustomLanguageServer host = null;
+
+        string logFile = "C:\\Users\\REDIZIT\\Documents\\GitHub\\Astra-Rider-extension\\LanguageServer\\lsp.log";
+        Logger logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File(logFile)
+                .CreateLogger();
+
+        try
+        {
+            logger.Information("Begin");
+
+
+            //host = await LanguageServerHost.Create(Console.OpenStandardInput(), Console.OpenStandardOutput(), logger, Microsoft.Extensions.Logging.LogLevel.Trace);
+            //await host.WaitForExit;
+
+            //await CustomLanguageServer.Create(Console.OpenStandardInput(), Console.OpenStandardOutput(), logFile);
+
+            //using var reader = new StreamReader(stdin);
+            //using var writer = new StreamWriter(stdout) { AutoFlush = true };
+
+
+
+
+
+            var rpc = new JsonRpc(Console.OpenStandardOutput(), Console.OpenStandardInput());
+
+            host = new CustomLanguageServer(logger, rpc);
+
+            rpc.AddLocalRpcTarget(host);
+            rpc.StartListening();
+
+            await rpc.Completion;
+
+
+
+            logger.Information("End");
+        }
+        catch (Exception err)
+        {
+            logger.Error(err, "Err");
+
+            throw;
+        }
+        finally
+        {
+            if (host != null) host.Dispose();
+        }       
+    }
+
+    private static void RunAsTCP()
     {
         bool isSingleRun = true;
         bool isThrowingExceptions = true;
@@ -69,7 +125,9 @@ public static class Program
 
     private static void OnReceived(string input)
     {
-        //Console.WriteLine("Received: " + input);
+        Console.WriteLine("Received: " + input);
+
+
         Package request = JsonConvert.DeserializeObject<Package>(input);
         if (request.command == "reset")
         {

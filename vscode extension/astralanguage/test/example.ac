@@ -1,0 +1,11 @@
+class program
+{
+	public main(): int
+	{
+		string str = "Hello from Astra"
+		ptr str_pointer = str.to_ptr()
+		ptr vga_pointer
+
+		return 777
+	}
+}

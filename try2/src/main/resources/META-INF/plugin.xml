@@ -13,11 +13,16 @@
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description>Plugin for supporting Astra language synta</description>
+    <description>Plugin for supporting Astra language syntax</description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
+
+    <extensionPoints>
+        <extensionPoint name="com.intellij.platform.lsp.serverSupportProvider" beanClass="myPackage.AstraLspServerSupportProvider" dynamic="true"/>
+    </extensionPoints>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -30,16 +35,18 @@
                 language="Astra"
                 extensions="ac"/>
 
-        <lang.parserDefinition
-                language="Astra"
-                implementationClass="myPackage.AstraParserDefinition"/>
+<!--        <lang.parserDefinition-->
+<!--                language="Astra"-->
+<!--                implementationClass="myPackage.AstraParserDefinition"/>-->
 
-        <lang.syntaxHighlighterFactory
-                language="Astra"
-                implementationClass="myPackage.AstraSyntaxHighlighterFactory"/>
+<!--        <lang.syntaxHighlighterFactory-->
+<!--                language="Astra"-->
+<!--                implementationClass="myPackage.AstraSyntaxHighlighterFactory"/>-->
 
-        <colorSettingsPage
-                implementation="myPackage.AstraColorSettingsPage"/>
+<!--        <colorSettingsPage-->
+<!--                implementation="myPackage.AstraColorSettingsPage"/>-->
+
+        <platform.lsp.serverSupportProvider implementation="myPackage.AstraLspServerSupportProvider"/>
 
     </extensions>
 </idea-plugin>

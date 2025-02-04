@@ -37,7 +37,8 @@ final class AstraParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiParser createParser(final Project project) {
-        return new AstraParser();
+//        return new AstraParser();
+        return new EmptyParser();
     }
 
     @NotNull

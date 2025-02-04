@@ -2,6 +2,8 @@ class Program
 
     public main(): int
     {
+        0b82ф
+
         return 12
     }
 }
