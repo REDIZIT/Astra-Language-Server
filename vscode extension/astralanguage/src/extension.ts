@@ -9,19 +9,10 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
   
- let client: LanguageClient;
+let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
-
-	console.log('Congratulations, your extension "astralanguage" is now active!');
-
-	const disposable = vscode.commands.registerCommand('astralanguage.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from astralanguage!');
-	});
-
-	context.subscriptions.push(disposable);
-
-
+	
 	//let serverPath = "C:/Users/REDIZIT/Documents/GitHub/Astra-Rider-extension/LanguageServer/bin/Debug/net8.0/LanguageServer.exe";
 	let serverPath = path.join(
 		"C:", "Users", "REDIZIT", "Documents", "GitHub", "Astra-Rider-extension",
