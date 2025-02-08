@@ -1,0 +1,15 @@
+class program
+{
+	public main(): int
+	{
+		return CustomClass.GetNumber()
+	}
+}
+
+class CustomClass
+{
+	public static GetNumber(): long
+	{
+		return 123
+	}
+}

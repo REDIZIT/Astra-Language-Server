@@ -23,7 +23,7 @@ public class TokenColors
         },
         new ColorTokenGroup()
         {
-            name = "typename",
+            name = "type.name",
             color = "4ec9b0",
             compilerTokenTypes = new HashSet<Type>()
             {
@@ -78,6 +78,7 @@ public class TokenColors
                 typeof(Token_Comprassion),
                 typeof(Token_AddSub),
                 typeof(Token_Factor),
+                // typeof(Token_BitOperator),
                 typeof(Token_Unary),
             }
         },
@@ -111,8 +112,9 @@ public class TokenColors
         },
         new ColorTokenGroup()
         {
-            name = "functionname",
+            name = "function.name",
             color = "dcdcaa",
+            compilerTokenTypes = new()
         }
     };
 

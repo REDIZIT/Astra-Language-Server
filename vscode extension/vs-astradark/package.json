@@ -1,0 +1,21 @@
+{
+  "name": "vs-astradark",
+  "displayName": "VisualStudioAstraDark",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Visual Studio AstraDark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Visual Studio AstraDark-color-theme.json"
+      }
+    ]
+  }
+}

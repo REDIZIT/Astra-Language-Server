@@ -17,7 +17,7 @@ public class HintBuilder
     public string Build(TypeInfo type, string name)
     {
         Append("### ");
-        Append(type.name, "typename");
+        Append(type.name, "type.name");
         Append(" ");
         Append(name, "identifier");
 
@@ -26,9 +26,9 @@ public class HintBuilder
     public string Build(FunctionInfo info)
     {
         Append("### ");
-        Append(info.owner.name, "typename");
+        Append(info.owner.name, "type.name");
         Append(".", "punctuation");
-        Append(info.name, "functionname");
+        Append(info.name, "function.name");
                 
         if (info.arguments.Count > 0)
         {
@@ -41,7 +41,7 @@ public class HintBuilder
                 if (isFirst == false) Append(", ");
                 isFirst = false;
                         
-                Append(argument.type.name, "typename");
+                Append(argument.type.name, "type.name");
                 Append(" ");
                 Append(argument.name, "identifier");
             }
@@ -58,7 +58,7 @@ public class HintBuilder
                 if (isFirst == false) Append(", ");
                 isFirst = false;
                         
-                Append(ret.name, "typename");
+                Append(ret.name, "type.name");
                         
             }
         }
@@ -74,7 +74,14 @@ public class HintBuilder
         }
         else
         {
-            strings.Add($"<span style='color:#{colors.TryGetGroup(colorGroupName).color};'>{str}</span>");
+            ColorTokenGroup g = colors.TryGetGroup(colorGroupName);
+
+            if (g == null)
+            {
+                throw new Exception($"Failed to find color token group with name '{colorGroupName}'");
+            }
+            
+            strings.Add($"<span style='color:#{g.color};'>{str}</span>");
         }
         
     }

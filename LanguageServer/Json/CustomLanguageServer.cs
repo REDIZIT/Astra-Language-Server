@@ -121,167 +121,138 @@ public class CustomLanguageServer
     [JsonRpcMethod(Methods.TextDocumentHoverName)]
     public object TextDocumentHoverName(JToken arg)
     {
-        HoverParams param = arg.ToObject<HoverParams>();
-        
-        Hover result = new Hover();
-
-        VirtualFile file = workspace.GetFile(param.TextDocument.Uri);
-
-        
-        
-        Token hoveredToken = null;
-        foreach (Token token in file.tokens)
+        try
         {
-            if (token.line == param.Position.Line && token.linedBegin <= param.Position.Character && param.Position.Character <= token.linedBegin + (token.end - token.begin))
+            HoverParams param = arg.ToObject<HoverParams>();
+
+            Hover result = new Hover();
+
+            VirtualFile file = workspace.GetFile(param.TextDocument.Uri);
+
+
+
+            Token hoveredToken = null;
+            foreach (Token token in file.tokens)
             {
-                hoveredToken = token;
-                break;
+                if (token.line == param.Position.Line && token.linedBegin <= param.Position.Character && param.Position.Character <= token.linedBegin + (token.end - token.begin))
+                {
+                    hoveredToken = token;
+                    break;
+                }
             }
-        }
-        if (hoveredToken == null) return null;
 
-        
-        
-        Node hoveredNode = null;
-        // StringBuilder b = new();
-        foreach (Node node in Resolver.EnumerateAllNodes(file.nodes))
-        {
-            if (node.consumedTokens == null) continue;
+            if (hoveredToken == null) return null;
 
-            // b.AppendLine(node.GetType().Name + ": " + string.Join(", ", node.consumedTokens.Select(t => t.GetType().Name)));
 
-            if (node.consumedTokens.Contains(hoveredToken))
+
+            Node hoveredNode = null;
+            // StringBuilder b = new();
+            foreach (Node node in Resolver.EnumerateAllNodes(file.nodes))
             {
-                hoveredNode = node;
-                break;
+                if (node.consumedTokens == null) continue;
+
+                // b.AppendLine(node.GetType().Name + ": " + string.Join(", ", node.consumedTokens.Select(t => t.GetType().Name)));
+
+                if (node.consumedTokens.Contains(hoveredToken))
+                {
+                    hoveredNode = node;
+                    break;
+                }
             }
-        }
-        if (hoveredNode == null) return null;
+
+            if (hoveredNode == null) return null;
 
 
 
-        if (hoveredNode is Node_VariableUse use)
-        {
-            TypeInfo type = use.type;
-            result.Contents = new HintBuilder(colors).Build(type, use.variableName).ToString();
-        }
-        else if (hoveredNode is Node_VariableDeclaration varDecl)
-        {
-            result.Contents = new HintBuilder(colors).Build(varDecl.fieldInfo.type, varDecl.fieldInfo.name).ToString();
-        }
-        else if (hoveredNode is Node_FieldAccess acc)
-        {
-            TypeInfo targetType = acc.targetType;
-            
-            FunctionInfo functionInfo = targetType.functions.FirstOrDefault(f => f.name == acc.targetFieldName);
-            
-            if (functionInfo != null)
+            if (hoveredNode is Node_VariableUse use)
             {
-                result.Contents = new HintBuilder(colors).Build(functionInfo).ToString();
+                TypeInfo type = use.type;
+                result.Contents = new HintBuilder(colors).Build(type, use.variableName).ToString();
             }
+            else if (hoveredNode is Node_VariableDeclaration varDecl)
+            {
+                result.Contents = new HintBuilder(colors).Build(varDecl.fieldInfo.type, varDecl.fieldInfo.name).ToString();
+            }
+            else if (hoveredNode is Node_FieldAccess acc)
+            {
+                TypeInfo targetType = acc.targetType;
+
+                FunctionInfo functionInfo = targetType.functions.FirstOrDefault(f => f.name == acc.targetFieldName);
+
+                if (functionInfo != null)
+                {
+                    result.Contents = new HintBuilder(colors).Build(functionInfo).ToString();
+                }
+            }
+            else if (hoveredNode is Node_Function funcDecl)
+            {
+                result.Contents = new HintBuilder(colors).Build(funcDecl.functionInfo).ToString();
+            }
+            else
+            {
+                // result.Contents = hoveredNode.ToString();
+            }
+
+            return result;
         }
-        else if (hoveredNode is Node_Function funcDecl)
+        catch (Exception err)
         {
-            result.Contents = new HintBuilder(colors).Build(funcDecl.functionInfo).ToString();
+            logger.Error(err, "Hover error");
+            throw;
         }
-        else
-        {
-            // result.Contents = hoveredNode.ToString();
-        }
-        
-        return result;
     }
     
 
     [JsonRpcMethod(Methods.TextDocumentSemanticTokensFull)]
     public object TextDocumentSemanticTokensFull(JToken arg)
     {
-        SemanticTokensParams p = arg.ToObject<SemanticTokensParams>();
-
-        //logger.Information("Semantics handle: " + JsonConvert.SerializeObject(p));
-
-
-        logger.Information(p.TextDocument.Uri);
-       
-        var astraTokens = workspace.GetTokens(p.TextDocument.Uri);
-
-        SemanticTokens tokens = new();
-
-        List<uint> data = new();
-
-        int prevLine = 0;
-        int prevStart = 0;
-
-        foreach (Token token in astraTokens)
+        try
         {
-            int deltaLine = token.line - prevLine;
-            int deltaStart = token.linedBegin - prevStart;
-            int length = token.end - token.begin;
-            int tokenType = colors.GetTokenType(token);
-            int tokenModifiers = 0;
+            SemanticTokensParams p = arg.ToObject<SemanticTokensParams>();
 
-            prevLine = token.line;
-            prevStart = token.linedBegin;
+            //logger.Information("Semantics handle: " + JsonConvert.SerializeObject(p));
 
 
-            data.Add((uint)deltaLine);
-            data.Add((uint)deltaStart);
-            data.Add((uint)length);
-            data.Add((uint)tokenType);
-            data.Add((uint)tokenModifiers);
+            logger.Information(p.TextDocument.Uri);
+
+            var astraTokens = workspace.GetTokens(p.TextDocument.Uri);
+
+            SemanticTokens tokens = new();
+
+            List<uint> data = new();
+
+            int prevLine = 0;
+            int prevStart = 0;
+
+            foreach (Token token in astraTokens)
+            {
+                int deltaLine = token.line - prevLine;
+                int deltaStart = token.linedBegin - prevStart;
+                int length = token.end - token.begin;
+                int tokenType = colors.GetTokenType(token);
+                int tokenModifiers = 0;
+
+                prevLine = token.line;
+                prevStart = token.linedBegin;
 
 
-            //// Token_Comment can be multiline, but VS Code does not allow multilines tokenes
-            //if (token is Token_Comment comment)
-            //{
-            //    logger.Information("Comment from " + comment.line + " to " + comment.endLine + ": " + string.Concat(comment.chars));
+                data.Add((uint)deltaLine);
+                data.Add((uint)deltaStart);
+                data.Add((uint)length);
+                data.Add((uint)tokenType);
+                data.Add((uint)tokenModifiers);
+            }
 
-            //    //int first
+            tokens.Data = data.ToArray();
 
-            //    // Duplicate comment some lines
-            //    for (int i = 0; i < comment.endLine - comment.line - 2; i++)
-            //    {
-            //        logger.Information(i.ToString());
-
-            //        AppendComment(data, tokenType);
-            //    }
-
-            //    prevLine = token.endLine;
-            //}
+            return tokens;
         }
-
-        tokens.Data = data.ToArray();
-
-        return tokens;
+        catch (Exception err)
+        {
+            logger.Error(err, "Semantic tokens error");
+            throw;
+        }
     }
-
-    private void AppendComment(List<uint> data, int tokenType)
-    {
-        data.Add(1);
-        data.Add(0);
-        data.Add(5);
-        data.Add((uint)tokenType);
-        data.Add(0);
-    }
-
-    //[JsonRpcMethod(Methods.TextDocumentPublishDiagnosticsName)]
-    //public object TextDocumentPublishDiagnosticsName(JToken arg)
-    //{
-    //    logger.Information("Publish diagnostics");
-
-    //    return null;
-    //}
-
-
-
-    //[JsonRpcMethod("textDocument/documentColor")]
-    //public object TextDocumentHoverName(JToken arg)
-    //{
-    //    logger.Information("Hover");
-
-    //    return null;
-    //}
-
 
     [JsonRpcMethod("exit")]
     public void Exit() => Environment.Exit(0);

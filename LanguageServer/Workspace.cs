@@ -58,47 +58,65 @@ public class Workspace
 
     public PublishDiagnosticParams Analyze(string fileUri)
     {
-        VirtualFile file = fileByUri[fileUri];
-
-        ErrorLogger errorLogger = new();
-        file.nodes = parser.Parse(file.tokens, errorLogger);
-
-        file.module = Resolver.DiscoverModule(file.nodes);
-
-
-        PublishDiagnosticParams p = new()
+        try
         {
-            Uri = fileUri,
-            Diagnostics = new Diagnostic[errorLogger.entries.Count]
-        };
+            // logger.Information("Analyze " + fileUri);
 
-        for (int i = 0; i < errorLogger.entries.Count; i++)
-        {
-            LogEntry e = errorLogger.entries[i];
+            VirtualFile file = fileByUri[fileUri];
 
-            //Token beginToken = file.tokens[e.tokenBeginIndex];
-            //Token endToken = file.tokens[e.tokenEndIndex];
-            Token token = e.token;
+            ErrorLogger errorLogger = new();
+            file.nodes = parser.Parse(file.tokens, errorLogger);
 
-            logger.Information(JsonConvert.SerializeObject(e));
-
-            p.Diagnostics[i] = new Diagnostic()
+            try
             {
-                Message = e.message,
-                Severity = DiagnosticSeverity.Error,
-                Range = new LspTypes.Range()
-                {
-                    Start = new Position((uint)token.line, (uint)token.linedBegin),
-                    End = new Position((uint)token.line, (uint)token.linedBegin + (uint)(token.end - token.begin))
-                },
-                //Source = "Test source",
-                //Code = "public"
+                file.module = Resolver.DiscoverModule(file.nodes);
+            }
+            catch (Exception err)
+            {
+                file.module = null;
+            }
+            
+
+
+            PublishDiagnosticParams p = new()
+            {
+                Uri = fileUri,
+                Diagnostics = new Diagnostic[errorLogger.entries.Count]
             };
+
+            for (int i = 0; i < errorLogger.entries.Count; i++)
+            {
+                LogEntry e = errorLogger.entries[i];
+
+                //Token beginToken = file.tokens[e.tokenBeginIndex];
+                //Token endToken = file.tokens[e.tokenEndIndex];
+                Token token = e.token;
+
+                logger.Information(JsonConvert.SerializeObject(e));
+
+                p.Diagnostics[i] = new Diagnostic()
+                {
+                    Message = e.message,
+                    Severity = DiagnosticSeverity.Error,
+                    Range = new LspTypes.Range()
+                    {
+                        Start = new Position((uint)token.line, (uint)token.linedBegin),
+                        End = new Position((uint)token.line, (uint)token.linedBegin + (uint)(token.end - token.begin))
+                    },
+                    //Source = "Test source",
+                    //Code = "public"
+                };
+            }
+
+            // logger.Information($"Parsed {file.tokens.Count} tokens into {file.nodes.Count} nodes with {errorLogger.entries.Count} errors");
+
+            return p;
         }
-
-        //logger.Information("Parsed with " + errorLogger.entries.Count + " errors");
-
-        return p;
+        catch (Exception err)
+        {
+            logger.Error(err, "Analyze error");
+            throw;
+        }
     }
 
     public List<Token> GetTokens(string fileUri)

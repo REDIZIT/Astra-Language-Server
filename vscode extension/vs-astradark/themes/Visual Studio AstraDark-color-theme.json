@@ -1,0 +1,20 @@
+{
+	"name": "Visual Studio AstraDark",
+	"type": "dark",
+	"colors": {	},
+	"semanticHighlighting": true,
+	"semanticTokenColors": {
+		"invalid": {
+			"foreground": "#e33f38",
+			"underline": true,
+		},
+		"type.name":"#4ec9b0",
+		"keyword":"#569cd6",
+		"keyword.control":"#d8a0df",
+		"punctuation":"#b4b4b4",
+		"number":"#b5cea8",
+		"string":"#d69d85",
+		"comment":"#57a64a",
+		"function.name":"#dcdcaa",
+	}
+}
