@@ -4,7 +4,7 @@
 		{   
 			"label": "Compile Astra to Simulator NASM",
 			"type": "shell",
-			"command": "AstraNASM compile -o='build' -t=0",
+			"command": "AstraNASM compile -o='build' -t=0 -p -co='//wsl.localhost/Ubuntu/home/redizit/Experiments/bootboot-master/mykernel/cpp/nasm'",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
@@ -16,7 +16,7 @@
 		{   
 			"label": "Compile Astra to VirtualBox NASM",
 			"type": "shell",
-			"command": "AstraNASM compile -o='build' -t=1",
+			"command": "AstraNASM compile -o='build' -t=1 -p -co='//wsl.localhost/Ubuntu/home/redizit/Experiments/bootboot-master/mykernel/cpp/nasm'",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
@@ -29,7 +29,10 @@
 			"label": "Simulate NASM",
 			"type": "shell",
 			"command": "C:/Users/REDIZIT/Documents/GitHub/AstraNASM/nasm simulator/bin/Debug/net8.0/nasm simulator.exe",
-			"args": ["run"]
+			"args": ["run"],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
 		}
 	]
 }
