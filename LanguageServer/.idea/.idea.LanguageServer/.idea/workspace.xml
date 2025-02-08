@@ -12,10 +12,7 @@
     <list default="true" id="ed229bb6-c5ea-438a-b36e-7f294ed5511f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LanguageServer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LanguageServer/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HintBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HintBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Json/CustomLanguageServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Json/CustomLanguageServer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Json/TokenColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Json/TokenColors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LanguageServer.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/LanguageServer.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Workspace.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/AST/AstraAST.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/AST/AstraAST.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/ErrorLogger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/ErrorLogger.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/ArrayMemory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/Memory/ArrayMemory.cs" afterDir="false" />
@@ -31,7 +28,7 @@
     <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../AstraNASM" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/854e003864794126b9cee85449215cb125e00/2b/119b98b1/HoverOptions.cs" root0="FORCE_HIGHLIGHTING" />
@@ -135,7 +132,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739033031062</updated>
-      <workItem from="1739033032211" duration="20050000" />
+      <workItem from="1739033032211" duration="20685000" />
     </task>
     <servers />
   </component>

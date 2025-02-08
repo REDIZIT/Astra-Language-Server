@@ -17,7 +17,7 @@ public class HintBuilder
     public string Build(TypeInfo type, string name)
     {
         Append("### ");
-        Append(type.name, "type.name");
+        Append(type.name, "type-name");
         Append(" ");
         Append(name, "identifier");
 
@@ -26,14 +26,14 @@ public class HintBuilder
     public string Build(FunctionInfo info)
     {
         Append("### ");
-        Append(info.owner.name, "type.name");
+        Append(info.owner.name, "type-name");
         Append(".", "punctuation");
         Append(info.name, "function.name");
                 
         if (info.arguments.Count > 0)
         {
             NewLine();
-            Append("params: ", "keyword.control");
+            Append("params: ", "keyword-control");
                     
             bool isFirst = true;
             foreach (FieldInfo argument in info.arguments)
@@ -41,7 +41,7 @@ public class HintBuilder
                 if (isFirst == false) Append(", ");
                 isFirst = false;
                         
-                Append(argument.type.name, "type.name");
+                Append(argument.type.name, "type-name");
                 Append(" ");
                 Append(argument.name, "identifier");
             }
@@ -50,7 +50,7 @@ public class HintBuilder
         if (info.returns.Count > 0)
         {
             NewLine();
-            Append("returns: ", "keyword.control");
+            Append("returns: ", "keyword-control");
                     
             bool isFirst = true;
             foreach (TypeInfo ret in info.returns)
@@ -58,7 +58,7 @@ public class HintBuilder
                 if (isFirst == false) Append(", ");
                 isFirst = false;
                         
-                Append(ret.name, "type.name");
+                Append(ret.name, "type-name");
                         
             }
         }
