@@ -37,7 +37,11 @@ export function activate(context: vscode.ExtensionContext) {
 		fileEvents: workspace.createFileSystemWatcher('**/.ac')
 	  },
 	  outputChannel,
-	  traceOutputChannel: outputChannel
+	  traceOutputChannel: outputChannel,
+	  markdown:
+	  {
+		isTrusted: true
+	  }
 	};
   
 	client = new LanguageClient(

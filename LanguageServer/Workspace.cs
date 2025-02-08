@@ -63,6 +63,8 @@ public class Workspace
         ErrorLogger errorLogger = new();
         file.nodes = parser.Parse(file.tokens, errorLogger);
 
+        file.module = Resolver.DiscoverModule(file.nodes);
+
 
         PublishDiagnosticParams p = new()
         {
@@ -105,29 +107,9 @@ public class Workspace
 
         return file.tokens;
     }
-}
-public class VirtualFile
-{
-    public List<char> chars;
-    public List<Token> tokens;
-    public List<Node> nodes;
-
-    public int GetLineIndex(uint line)
+    
+    public VirtualFile GetFile(string fileUri)
     {
-        if (line == 0) return 0;
-
-        for (int i = 0; i < chars.Count; i++)
-        {
-            if (chars[i] == '\n')
-            {
-                line--;
-                if (line == 0)
-                {
-                    return i + 1;
-                }
-            }
-        }
-
-        return -1;
+        return fileByUri[fileUri];
     }
 }

@@ -15,6 +15,7 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "identifier",
+            color = "dcdcdc",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_Identifier)
@@ -23,6 +24,7 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "typename",
+            color = "4ec9b0",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_TypeName)
@@ -31,16 +33,19 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "keyword",
+            color = "569cd6",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_New),
                 typeof(Token_Visibility),
                 typeof(Token_Class),
+                typeof(Token_Static),
             }
         },
         new ColorTokenGroup()
         {
             name = "keyword.control",
+            color = "d8a0df",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_Return),
@@ -53,6 +58,7 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "punctuation",
+            color = "b4b4b4",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_BracketOpen),
@@ -78,6 +84,7 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "number",
+            color = "b5cea8",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_Constant),
@@ -86,6 +93,7 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "string",
+            color = "d69d85",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_String),
@@ -95,11 +103,17 @@ public class TokenColors
         new ColorTokenGroup()
         {
             name = "comment",
+            color = "57a64a",
             compilerTokenTypes = new HashSet<Type>()
             {
                 typeof(Token_Comment),
             }
         },
+        new ColorTokenGroup()
+        {
+            name = "functionname",
+            color = "dcdcaa",
+        }
     };
 
     public int GetTokenType(Token token)
@@ -116,6 +130,22 @@ public class TokenColors
 
         return 0;
     }
+    
+    public ColorTokenGroup TryGetGroup(string name)
+    {
+        for (int i = 0; i < groups.Length; i++)
+        {
+            ColorTokenGroup group = groups[i];
+
+            if (group.name == name)
+            {
+                return group;
+            }
+        }
+
+        return null;
+    }
+
 
     public string[] GetNames()
     {

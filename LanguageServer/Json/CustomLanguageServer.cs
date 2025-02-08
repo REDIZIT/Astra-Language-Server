@@ -1,5 +1,9 @@
-﻿using Astra.Compilation;
+﻿using System.Diagnostics;
+using System.Text;
+using Astra.Compilation;
+using LanguageServer;
 using LspTypes;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog.Core;
@@ -117,10 +121,77 @@ public class CustomLanguageServer
     [JsonRpcMethod(Methods.TextDocumentHoverName)]
     public object TextDocumentHoverName(JToken arg)
     {
-        //logger.Information("Hover");
+        HoverParams param = arg.ToObject<HoverParams>();
+        
+        Hover result = new Hover();
 
-        return null;
+        VirtualFile file = workspace.GetFile(param.TextDocument.Uri);
+
+        
+        
+        Token hoveredToken = null;
+        foreach (Token token in file.tokens)
+        {
+            if (token.line == param.Position.Line && token.linedBegin <= param.Position.Character && param.Position.Character <= token.linedBegin + (token.end - token.begin))
+            {
+                hoveredToken = token;
+                break;
+            }
+        }
+        if (hoveredToken == null) return null;
+
+        
+        
+        Node hoveredNode = null;
+        // StringBuilder b = new();
+        foreach (Node node in Resolver.EnumerateAllNodes(file.nodes))
+        {
+            if (node.consumedTokens == null) continue;
+
+            // b.AppendLine(node.GetType().Name + ": " + string.Join(", ", node.consumedTokens.Select(t => t.GetType().Name)));
+
+            if (node.consumedTokens.Contains(hoveredToken))
+            {
+                hoveredNode = node;
+                break;
+            }
+        }
+        if (hoveredNode == null) return null;
+
+
+
+        if (hoveredNode is Node_VariableUse use)
+        {
+            TypeInfo type = use.type;
+            result.Contents = new HintBuilder(colors).Build(type, use.variableName).ToString();
+        }
+        else if (hoveredNode is Node_VariableDeclaration varDecl)
+        {
+            result.Contents = new HintBuilder(colors).Build(varDecl.fieldInfo.type, varDecl.fieldInfo.name).ToString();
+        }
+        else if (hoveredNode is Node_FieldAccess acc)
+        {
+            TypeInfo targetType = acc.targetType;
+            
+            FunctionInfo functionInfo = targetType.functions.FirstOrDefault(f => f.name == acc.targetFieldName);
+            
+            if (functionInfo != null)
+            {
+                result.Contents = new HintBuilder(colors).Build(functionInfo).ToString();
+            }
+        }
+        else if (hoveredNode is Node_Function funcDecl)
+        {
+            result.Contents = new HintBuilder(colors).Build(funcDecl.functionInfo).ToString();
+        }
+        else
+        {
+            // result.Contents = hoveredNode.ToString();
+        }
+        
+        return result;
     }
+    
 
     [JsonRpcMethod(Methods.TextDocumentSemanticTokensFull)]
     public object TextDocumentSemanticTokensFull(JToken arg)

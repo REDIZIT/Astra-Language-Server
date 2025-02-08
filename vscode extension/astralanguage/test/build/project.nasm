@@ -1,4 +1,3 @@
-	extern _binary_font_psf_start
 	section .data
 	str__Hello_from_Astra_ db 18, " Hello from Astra ", 0
 	
@@ -71,7 +70,7 @@ Console.PutChar:
 	mov rbp, rsp
 	
 	sub rsp, 8 ; allocate ptr '_binary_font_psf_start' at [rbp-8]
-	mov qword [rbp-8], _binary_font_psf_start
+	mov qword [rbp-8], 0
 	
 ; -- Literal = 32
 	sub rsp, 8 ; allocate long 'anon_1' at [rbp-16]
@@ -382,10 +381,12 @@ program.main:
 ; -- new Console
 	sub rsp, 8 ; allocate Console 'anon_2' at [rbp-16]
 ; -- heap alloc
-	mov qword [rbp-8], 0x110
-	mov rbx, [0x100]
-	add rbx, 1
-	mov [0x100], rbx
+	mov rbx, [256]
+	mov rdx, 272
+	add rdx, rbx
+	mov qword [rbp-8], rdx
+	add rbx, 8
+	mov [256], rbx
 	sub rsp, 8 ; allocate long 'console' at [rbp-24]
 	mov qword rbx, [rbp-8]
 	mov qword [rbp-24], rbx
