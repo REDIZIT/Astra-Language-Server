@@ -24,7 +24,7 @@ public static class Program
         string logFile = "C:\\Users\\REDIZIT\\Documents\\GitHub\\Astra-Rider-extension\\LanguageServer\\lsp.log";
         Logger logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .WriteTo.File(logFile)
+                // .WriteTo.File(logFile)
                 .CreateLogger();
 
         try

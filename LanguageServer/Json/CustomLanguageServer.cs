@@ -184,7 +184,7 @@ public class CustomLanguageServer
                     result.Contents = new HintBuilder(colors).Build(functionInfo).ToString();
                 }
             }
-            else if (hoveredNode is Node_Function funcDecl)
+            else if (hoveredNode is Node_FunctionBody funcDecl)
             {
                 result.Contents = new HintBuilder(colors).Build(funcDecl.functionInfo).ToString();
             }

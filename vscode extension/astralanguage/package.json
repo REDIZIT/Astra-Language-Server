@@ -19,12 +19,25 @@
 					"Astra"
 				],
 				"extensions": [
-					".ac"
+					".as"
 				],
 				"configuration": "./language-configuration.json",
 				"icon": {
-					"light": "./icons/16x16.png",
-					"dark": "./icons/16x16.png"
+					"light": "./icons/16x16_3.png",
+					"dark": "./icons/16x16_3.png"
+				}
+			},
+			{
+				"id": "Astra (byte-code)",
+				"aliases": [
+					"Astra (compiled)"
+				],
+				"extensions": [
+					".asc"
+				],
+				"icon": {
+					"light": "./icons/compiled_16x16.png",
+					"dark": "./icons/compiled_16x16.png"
 				}
 			}
 		]

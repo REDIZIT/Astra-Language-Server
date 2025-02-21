@@ -12,12 +12,16 @@
     <list default="true" id="ed229bb6-c5ea-438a-b36e-7f294ed5511f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LanguageServer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LanguageServer/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HintBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/HintBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Json/CustomLanguageServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Json/CustomLanguageServer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Json/TokenColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Json/TokenColors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/AST/AstraAST.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/AST/AstraAST.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/ErrorLogger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/AstraNASM/Compiler/Compiler/ErrorLogger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/ArrayMemory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/Memory/ArrayMemory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/IAddressableMemory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/Memory/IAddressableMemory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/UnlimitedMemory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../AstraNASM/nasm simulator/Memory/UnlimitedMemory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageServer.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/LanguageServer.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../vscode extension/astralanguage/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/src/extension.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../vscode extension/astralanguage/src/extension.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/test/build/example.nasm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/test/build/project.nasm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/test/console.ac" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vscode extension/astralanguage/test/example.ac" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +32,7 @@
     <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../AstraNASM" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/854e003864794126b9cee85449215cb125e00/2b/119b98b1/HoverOptions.cs" root0="FORCE_HIGHLIGHTING" />
@@ -41,12 +45,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/854e003864794126b9cee85449215cb125e00/f3/3cc3930d/MarkedString.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a48a1111bad74c5b91828b2d3fd2f58227600/1b/22d327ba/Logger.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/18eea9a8df86a8cf7c0fcf522c1881443416224e83bd8d4379b83897f3de777/HoverFeature.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2c8e7ca976f350cba9836d5565dac56b11e0b56656fa786460eb1395857a6fa/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c6a25ea096494870a1dd94f188bc2634db58c9faa8b319e415cadf49b913d1a/StringBuilder.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e8de9e72b94bea71dd352fff29e43b59bb174bd87e7b9aff04f21f04c88273c/HashSet.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2slbIhkD63jOVTmBM4s205tUzWD" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -55,20 +61,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.AstraNASM.executor": "Run",
-    ".NET Project.LanguageServer.executor": "Debug",
-    ".NET Project.nasm simulator.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.notifications"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.AstraNASM.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Project.LanguageServer.executor&quot;: &quot;Debug&quot;,
+    &quot;.NET Project.nasm simulator.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.notifications&quot;
   }
-}]]></component>
-  <component name="RunManager" selected=".NET Project.LanguageServer">
+}</component>
+  <component name="RunManager" selected=".NET Project.AstraNASM">
     <configuration name="AstraNASM" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -132,7 +138,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1739033031062</updated>
-      <workItem from="1739033032211" duration="20685000" />
+      <workItem from="1739033032211" duration="39085000" />
+      <workItem from="1740144484895" duration="1154000" />
     </task>
     <servers />
   </component>
@@ -140,6 +147,9 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.ac" />
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>

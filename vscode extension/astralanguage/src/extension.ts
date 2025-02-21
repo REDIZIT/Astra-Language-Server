@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let clientOptions: LanguageClientOptions = {
 	  documentSelector: [{ scheme: 'file', language: 'Astra' }],
 	  synchronize: {
-		fileEvents: workspace.createFileSystemWatcher('**/.ac')
+		fileEvents: workspace.createFileSystemWatcher('**/.as')
 	  },
 	  outputChannel,
 	  traceOutputChannel: outputChannel,

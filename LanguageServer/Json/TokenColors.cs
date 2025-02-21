@@ -40,6 +40,7 @@ public class TokenColors
                 typeof(Token_Visibility),
                 typeof(Token_Class),
                 typeof(Token_Static),
+                typeof(Token_As),
             }
         },
         new ColorTokenGroup()
@@ -53,6 +54,9 @@ public class TokenColors
                 typeof(Token_Else),
                 typeof(Token_For),
                 typeof(Token_While),
+                typeof(Token_Try),
+                typeof(Token_Catch),
+                typeof(Token_Throw),
             }
         },
         new ColorTokenGroup()

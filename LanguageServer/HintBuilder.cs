@@ -28,8 +28,8 @@ public class HintBuilder
         Append("### ");
         Append(info.owner.name, "type-name");
         Append(".", "punctuation");
-        Append(info.name, "function.name");
-                
+        Append(info.name, "function-name");
+        
         if (info.arguments.Count > 0)
         {
             NewLine();
